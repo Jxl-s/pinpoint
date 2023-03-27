@@ -32,16 +32,20 @@ class MyApp extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'Welcome To Pinpoint',
                   style: TextStyle(
                       fontWeight: FontWeight.w800,
-                      fontSize: 50,
+                      fontSize: 40,
                       fontFamily: "RubikMonoOne"),
                   textAlign: TextAlign.center,
                 ),
-                Text(
+                Image.asset(
+                    "assets/images/front_logo.png",
+                  scale: 0.5,
+                ),
+                const Text(
                   'Never forget your favourite locations. '
                   'Pin them and come back at a later time.',
                   style: TextStyle(
@@ -50,6 +54,47 @@ class MyApp extends StatelessWidget {
                       fontFamily: "RubikMonoOne"),
                   textAlign: TextAlign.center,
                 ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Sign in with Facebook',
+                          style: TextStyle(
+                            fontFamily: "RubikMonoOne",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Sign in with Discord',
+                          style: TextStyle(
+                            fontFamily: "RubikMonoOne",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Sign in with Google',
+                          style: TextStyle(
+                            fontFamily: "RubikMonoOne",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
