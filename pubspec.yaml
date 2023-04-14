@@ -79,6 +79,10 @@ flutter:
     - family: RubikMonoOne
       fonts:
         - asset: assets/fonts/RubikMonoOne-Regular.ttf
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
