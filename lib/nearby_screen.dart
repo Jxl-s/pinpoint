@@ -32,9 +32,18 @@ class NearbyScreen extends StatelessWidget {
             shrinkWrap: true,
             padding: const EdgeInsets.all(10),
             children: [
-              NearbyItem(),
-              NearbyItem(),
-              NearbyItem(),
+              NearbyItem(
+                distance: '15m',
+                name: 'Vanier College',
+                address: '821 Av. Sainte-Croix, Saint-Laurent, QC H4L 3X9',
+                type: 'College',
+              ),
+              NearbyItem(
+                distance: '200.3m',
+                name: 'Maison O The',
+                address: '3131 Bd Cote Vertu Ouest, St-Laurent, QC H4R 1Y8',
+                type: 'Bubble Tea Shop',
+              ),
             ],
           ),
         ),

@@ -2,7 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NearbyItem extends StatelessWidget {
-  const NearbyItem({Key? key}) : super(key: key);
+  NearbyItem({
+    Key? key,
+    required this.distance,
+    required this.type,
+    required this.name,
+    required this.address,
+  }) : super(key: key);
+
+  String distance;
+  String type;
+  String name;
+  String address;
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +35,14 @@ class NearbyItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '15m',
+                  distance,
                   style: TextStyle(
                       fontSize: 18,
                       color: Color.fromRGBO(0, 0, 0, 0.5),
                       fontFamily: "Poppins"),
                 ),
                 Text(
-                  'College',
+                  type,
                   style: TextStyle(
                       fontSize: 18,
                       color: Color.fromRGBO(0, 0, 0, 0.5),
@@ -44,7 +55,7 @@ class NearbyItem extends StatelessWidget {
             ),
             Row(
               children: [
-                Text('Vanier College',
+                Text(name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
@@ -58,7 +69,7 @@ class NearbyItem extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    '821 Av. Sainte-Croix, Saint-Laurent, QC H4L 3X9',
+                    address,
                     style: TextStyle(
                       fontSize: 16,
                       color: Color.fromRGBO(0, 0, 0, 0.5),
