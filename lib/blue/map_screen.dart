@@ -210,9 +210,36 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget MapPage() {
-    String name = selectedLocation?.name ?? 'Map';
+    String name = selectedLocation?.name ?? 'No selected location';
     String address =
         selectedLocation?.address ?? 'Select a location to view its address';
+
+    bool isSelected = selectedLocation != null;
+    Widget buttonRow = isSelected
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: Text('ADD PIN',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    )),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'SHARE',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          )
+        : Row();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,29 +269,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   color: Colors.black.withOpacity(0.5),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: Text('ADD PIN',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'SHARE',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              buttonRow
             ],
           ),
         )
