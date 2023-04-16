@@ -22,7 +22,49 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  int _currentIndex = 0;
+  Location? selectedLocation;
+
+  List<Location> nearbyLocations = [];
+  List<Location> pinnedLocations = [];
+
+  _MapScreenState() {
+    // Probably fetch the data here?
+    nearbyLocations.add(
+      Location(
+        type: "College",
+        distance: "200 m",
+        name: "Vanier College",
+        address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
+      ),
+    );
+
+    nearbyLocations.add(
+      Location(
+        type: "Pizza Restaurant",
+        distance: "3.2 km",
+        name: "Papa John's Pizza",
+        address: "1320 De l'Église St, Saint-Laurent, Quebec H4L 2G7",
+      ),
+    );
+
+    nearbyLocations.add(
+      Location(
+        type: "Subway Station",
+        distance: "33.3 km",
+        name: "Metro Cote Vertu",
+        address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
+      ),
+    );
+
+    pinnedLocations.add(
+      Location(
+        type: "Subway Station",
+        distance: "33.3 km",
+        name: "Metro Cote Vertu",
+        address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -40,7 +82,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void setLocationAndTab(Location location) {
+  // Helper for transitioning
+  void viewOnMap(Location location) {
     setState(() {
       selectedLocation = location;
     });
@@ -49,37 +92,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
-  Location? selectedLocation;
+  // Data functions
+  bool shareLocation(Location? location) {
+    if (location == null) return false;
+    return true;
+  }
 
-  List<Location> pinnedLocations = [
-    Location(
-      type: "College",
-      distance: "200 m",
-      name: "Vanier College",
-      address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
-    ),
-  ];
+  bool addPin(Location? location) {
+    if (location == null) return false;
+    return true;
+  }
 
-  List<Location> nearbyLocations = [
-    Location(
-      type: "College",
-      distance: "200 m",
-      name: "Vanier College",
-      address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
-    ),
-    Location(
-      type: "Pizza Restaurant",
-      distance: "3.2 km",
-      name: "Papa John's Pizza",
-      address: "1320 De l'Église St, Saint-Laurent, Quebec H4L 2G7",
-    ),
-    Location(
-      type: "Subway Station",
-      distance: "33.3 km",
-      name: "Metro Cote Vertu",
-      address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
-    ),
-  ];
+  bool removePin(Location? location) {
+    if (location == null) return false;
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +235,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
-                  setLocationAndTab(location);
+                  viewOnMap(location);
                 },
                 child: Text(
                   'VIEW ON MAP',
@@ -225,7 +252,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget MapPage() {
     String name = selectedLocation?.name ?? 'No selected location';
     String address =
-        selectedLocation?.address ?? 'Select a location to view its address';
+        selectedLocation?.address ?? 'Select a location to view its information';
 
     bool isSelected = selectedLocation != null;
     Widget buttonRow = isSelected
@@ -233,7 +260,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  addPin(selectedLocation);
+                },
                 child: Text('ADD PIN',
                     style: TextStyle(
                       fontSize: 16,
@@ -241,7 +270,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     )),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  shareLocation(selectedLocation);
+                },
                 child: Text(
                   'SHARE',
                   style: TextStyle(
@@ -364,7 +395,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               children: [
                 TextButton(
                   onPressed: () {
-                    setLocationAndTab(location);
+                    viewOnMap(location);
                   },
                   child: Text(
                     'VIEW ON MAP',
@@ -372,7 +403,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    removePin(selectedLocation);
+                  },
                   child: Text(
                     'REMOVE PIN',
                     style: TextStyle(
