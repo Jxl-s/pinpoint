@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/PinPointPage.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
-import './nearby_item.dart';
+import 'package:pinpoint/blue/map_screen.dart';
 
 class MainBlue extends StatelessWidget {
-  var screen = LandingScreen();
+  PinPointScreen screen = LandingScreen();
+
   MainBlue({super.key});
 
   @override

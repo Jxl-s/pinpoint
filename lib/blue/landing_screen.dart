@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/PinPointPage.dart';
 
-class LandingScreen extends StatelessWidget {
-  final String title = "PinPoint";
-  const LandingScreen({super.key});
+class LandingScreen extends PinPointScreen {
+  @override
+  String get title => "PinPoint";
 
   @override
   Widget build(BuildContext context) {
