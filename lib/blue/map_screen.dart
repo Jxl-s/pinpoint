@@ -40,7 +40,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void setLocationAndTab(Location location) {
+    setState(() {
+      selectedLocation = location;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _tabController.animateTo(1);
+    });
+  }
+
   Location? selectedLocation;
+
+  List<Location> pinnedLocations = [
+    Location(
+      type: "College",
+      distance: "200 m",
+      name: "Vanier College",
+      address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
+    ),
+  ];
 
   List<Location> nearbyLocations = [
     Location(
@@ -190,12 +208,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
-                  setState(() {
-                    selectedLocation = location;
-                  });
-                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                    _tabController.animateTo(1);
-                  });
+                  setLocationAndTab(location);
                 },
                 child: Text(
                   'VIEW ON MAP',
@@ -278,6 +291,99 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget PinsPage() {
-    return Placeholder();
+    return ListView(
+      children: pinnedLocations.map((e) => PinnedCard(e)).toList(),
+    );
+  }
+
+  Widget PinnedCard(Location location) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      location.type,
+                      style: TextStyle(
+                        color: Colors.black.withOpacity(0.5),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  location.distance,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.5),
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 2, bottom: 4),
+              child: Text(
+                location.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Text(
+              location.address,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setLocationAndTab(location);
+                  },
+                  child: Text(
+                    'VIEW ON MAP',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'REMOVE PIN',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
