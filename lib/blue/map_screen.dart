@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/PinPointPage.dart';
+import 'package:pinpoint/blue/components/drawer.dart';
 
 class Location {
   String type;
@@ -113,6 +113,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        drawer: PinPointDrawer(),
         appBar: AppBar(
           title: Text(
             "PinPoint - Map",
@@ -251,8 +252,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Widget MapPage() {
     String name = selectedLocation?.name ?? 'No selected location';
-    String address =
-        selectedLocation?.address ?? 'Select a location to view its information';
+    String address = selectedLocation?.address ??
+        'Select a location to view its information';
 
     bool isSelected = selectedLocation != null;
     Widget buttonRow = isSelected

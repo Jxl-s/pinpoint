@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/PinPointPage.dart';
 
 class LandingScreen extends StatelessWidget {
   @override
