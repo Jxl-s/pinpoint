@@ -1,7 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/PinPointPage.dart';
 
-class MapScreen extends PinPointScreen {
+class Location {
+  String type;
+  String distance;
+  String name;
+  String address;
+
+  Location({
+    required this.type,
+    required this.distance,
+    required this.name,
+    required this.address,
+  });
+}
+
+class MapScreen extends StatelessWidget {
+  List<Location> nearbyLocations = [
+    Location(
+      type: "College",
+      distance: "200 m",
+      name: "Vanier College",
+      address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
+    ),
+    Location(
+      type: "Pizza Restaurant",
+      distance: "3.2 km",
+      name: "Papa John's Pizza",
+      address: "1320 De l'Église St, Saint-Laurent, Quebec H4L 2G7",
+    ),
+    Location(
+      type: "Subway Station",
+      distance: "33.3 km",
+      name: "Metro Cote Vertu",
+      address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -56,35 +91,11 @@ class MapScreen extends PinPointScreen {
 
   Widget NearbyPage() {
     return ListView(
-      children: [
-        NearbyCard(
-          type: "College",
-          distance: "200 m",
-          name: "Vanier College",
-          address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
-        ),
-        NearbyCard(
-          type: "Pizza Restaurant",
-          distance: "3.2 km",
-          name: "Papa John's Pizza",
-          address: "1320 De l'Église St, Saint-Laurent, Quebec H4L 2G7",
-        ),
-        NearbyCard(
-          type: "Subway Station",
-          distance: "33.3 km",
-          name: "Metro Cote Vertu",
-          address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
-        ),
-      ],
+      children: nearbyLocations.map((e) => NearbyCard(e)).toList(),
     );
   }
 
-  Widget NearbyCard({
-    required String type,
-    required String distance,
-    required String name,
-    required String address,
-  }) {
+  Widget NearbyCard(Location location) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
@@ -112,7 +123,7 @@ class MapScreen extends PinPointScreen {
                     ),
                     SizedBox(width: 8),
                     Text(
-                      type,
+                      location.type,
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.5),
                         fontSize: 16,
@@ -121,7 +132,7 @@ class MapScreen extends PinPointScreen {
                   ],
                 ),
                 Text(
-                  distance,
+                  location.distance,
                   style: TextStyle(
                     color: Colors.black.withOpacity(0.5),
                     fontSize: 16,
@@ -132,7 +143,7 @@ class MapScreen extends PinPointScreen {
             Padding(
               padding: const EdgeInsets.only(top: 2, bottom: 4),
               child: Text(
-                name,
+                location.name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -141,7 +152,7 @@ class MapScreen extends PinPointScreen {
               ),
             ),
             Text(
-              address,
+              location.address,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.black.withOpacity(0.5),
@@ -164,7 +175,38 @@ class MapScreen extends PinPointScreen {
   }
 
   Widget MapPage() {
-    return Placeholder();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Placeholder(),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 150,
+          // child: Column(
+          //   children: [
+          //     Text(
+          //       name,
+          //       style: TextStyle(
+          //         fontWeight: FontWeight.bold,
+          //         fontSize: 24,
+          //       ),
+          //     ),
+          //     Text(
+          //       address,
+          //       style: TextStyle(
+          //         fontWeight: FontWeight.bold,
+          //         fontSize: 24,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        )
+      ],
+    );
   }
 
   Widget PinsPage() {

@@ -4,7 +4,7 @@ import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 
 class MainBlue extends StatelessWidget {
-  PinPointScreen screen = MapScreen();
+  StatelessWidget screen = MapScreen();
 
   MainBlue({super.key});
 
