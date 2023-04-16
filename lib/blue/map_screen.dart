@@ -15,7 +15,33 @@ class Location {
   });
 }
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      initialIndex: 0,
+      length: 3,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Location? selectedLocation;
+
   List<Location> nearbyLocations = [
     Location(
       type: "College",
@@ -49,6 +75,7 @@ class MapScreen extends StatelessWidget {
           ),
           centerTitle: true,
           bottom: TabBar(
+            controller: _tabController,
             tabs: [
               Tab(
                 text: "NEARBY",
@@ -78,6 +105,7 @@ class MapScreen extends StatelessWidget {
           height: double.infinity,
           padding: const EdgeInsets.all(20),
           child: TabBarView(
+            controller: _tabController,
             children: [
               NearbyPage(),
               MapPage(),
@@ -161,7 +189,14 @@ class MapScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    selectedLocation = location;
+                  });
+                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                    _tabController.animateTo(1);
+                  });
+                },
                 child: Text(
                   'VIEW ON MAP',
                   style: TextStyle(fontWeight: FontWeight.w600),
@@ -175,6 +210,10 @@ class MapScreen extends StatelessWidget {
   }
 
   Widget MapPage() {
+    String name = selectedLocation?.name ?? 'Map';
+    String address =
+        selectedLocation?.address ?? 'Select a location to view its address';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -185,25 +224,49 @@ class MapScreen extends StatelessWidget {
           height: 10,
         ),
         Container(
-          height: 150,
-          // child: Column(
-          //   children: [
-          //     Text(
-          //       name,
-          //       style: TextStyle(
-          //         fontWeight: FontWeight.bold,
-          //         fontSize: 24,
-          //       ),
-          //     ),
-          //     Text(
-          //       address,
-          //       style: TextStyle(
-          //         fontWeight: FontWeight.bold,
-          //         fontSize: 24,
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              Text(
+                address,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: Text('ADD PIN',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'SHARE',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         )
       ],
     );
