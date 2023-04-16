@@ -25,7 +25,7 @@ class SearchItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black),
+            BoxShadow(color: Colors.black, blurRadius: 4),
           ],
         ),
         child: Column(
