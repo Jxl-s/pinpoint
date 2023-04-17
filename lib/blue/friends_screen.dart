@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import './components/drawer.dart';
 
@@ -6,17 +7,44 @@ import './friends_screen_list.dart';
 import './friends_screen_request.dart';
 import './friends_screen_search.dart';
 
-class FriendsScreen extends StatelessWidget {
+class FriendsScreen extends StatefulWidget {
+  FriendsScreen() {}
+
+  @override
+  State<FriendsScreen> createState() => _FriendsScreenState();
+}
+
+class _FriendsScreenState extends State<FriendsScreen> {
   List<User> friends = [];
   List<User> requests = [];
 
-  FriendsScreen() {
-    friends = User.example(5);
-    requests = User.example(5);
+  bool loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    User? user = getLoggedUser();
+
+    if (user != null) {
+      Future<List<User>> friends = user.getFriends();
+      Future<List<User>> requests = user.getIncomingRequests();
+
+      Future.wait<List<User>>([friends, requests]).then((value) {
+        setState(() {
+          this.friends = User.example(4);
+          this.requests = User.example(4);
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {});
+        });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print(this.friends);
     return DefaultTabController(
       length: 3,
       child: Scaffold(

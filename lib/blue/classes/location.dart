@@ -20,6 +20,16 @@ class Location {
     required this.address,
   }): id = id ?? 0;
 
+  static Future<List<Location>> getNearby() async {
+    // TODO: actually implmenent it
+    return Location.example(5);
+  }
+
+  static Future<List<Location>> getPins(User user) async {
+    // TODO: using the user.id make it work for real
+    return Location.example(5);
+  }
+
   Future<bool> createPin(User user) async {
     // TODO: create an entry, update the id too
     return true;

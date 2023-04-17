@@ -22,6 +22,16 @@ class User {
         isFriend = isFriend ?? false,
         requestSent = requestSent ?? false;
 
+  Future<List<User>> getFriends() async {
+    // TODO: using this user id, fetch the friends
+    return User.example(5);
+  }
+
+  Future<List<User>> getIncomingRequests() async {
+    // TODO: get the requests
+    return User.example(5);
+  }
+
   Future<bool> create() async {
     // TODO: create an entry, update the id too
     return true;

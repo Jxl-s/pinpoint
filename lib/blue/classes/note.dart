@@ -22,6 +22,17 @@ class Note {
   })  : date = date ?? DateTime.now(),
         id = id ?? 0;
 
+  static Future<List<Note>> getNotes(User user) async {
+    // TODO: using the user id, fetch their notes
+    return Note.example(5);
+  }
+
+  static Future<List<Note>> getLocationNotes(User user, Location location) async {
+    // TODO: location id, find all locations, then only select
+    // the ones from the user and from friends of the user
+    return Note.example(5);
+  }
+
   Future<bool> create() async {
     // TODO: create an entry, update the id too
     return true;
