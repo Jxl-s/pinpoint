@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/friend.dart';
 
 class FriendsScreenList extends StatefulWidget {
+  List<User> friends = [];
+
+  FriendsScreenList(this.friends);
+
   @override
-  State<FriendsScreenList> createState() => _FriendsScreenListState();
+  State<FriendsScreenList> createState() => _FriendsScreenListState(this.friends);
 }
 
 class _FriendsScreenListState extends State<FriendsScreenList> {
   List<User> friends = [];
   List<User> filteredFriends = [];
 
-  _FriendsScreenListState() {
-    friends = User.example(4);
+  _FriendsScreenListState(List<User> friends) {
+    this.friends = friends;
     filteredFriends = [...friends];
 
     _searchFieldController.addListener(updateFilteredFriends);
@@ -54,7 +58,9 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
             ),
           ),
           SizedBox(
-            height: 60,
+            height: 10,
+          ),
+          SizedBox(
             child: TextField(
               controller: _searchFieldController,
               decoration: InputDecoration(
@@ -66,6 +72,9 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
                 hintText: 'Search Friends',
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
           Expanded(
             child: ListView(
@@ -80,7 +89,7 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
 
   Widget FriendCard(User friend) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Container(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         decoration: BoxDecoration(
