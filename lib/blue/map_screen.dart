@@ -113,7 +113,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: PinPointDrawer(),
+        drawer: PinPointDrawer(
+          title: 'Map View',
+        ),
         appBar: AppBar(
           title: Text(
             "PinPoint - Map",
