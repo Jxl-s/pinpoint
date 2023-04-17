@@ -273,7 +273,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MyPinsNotesScreen(location.id),
+                        builder: (context) => MyPinsNotesScreen(location),
                       ),
                     );
                   },

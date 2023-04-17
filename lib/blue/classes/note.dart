@@ -19,22 +19,22 @@ class Note {
           id: 1,
           author: 'John',
           note: 'Lorem ipsum dolor sit amet',
-          date: DateTime.now()),
+          date: DateTime(2022, 5, 12)),
       Note(
           id: 2,
           author: 'Jane',
           note: 'Consectetur adipiscing elit',
-          date: DateTime.now()),
+          date: DateTime(2023, 1, 2)),
       Note(
           id: 3,
           author: 'Bob',
           note: 'Sed do eiusmod tempor incididunt',
-          date: DateTime.now()),
+          date: DateTime(2021, 1, 20)),
       Note(
           id: 4,
           author: 'Alice',
           note: 'Ut enim ad minim veniam',
-          date: DateTime.now()),
+          date: DateTime(2023, 1, 30)),
       Note(
           id: 5,
           author: 'Charlie',
