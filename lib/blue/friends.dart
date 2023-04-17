@@ -13,7 +13,7 @@ class Friends extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('P I N P O I N T - F R I E N D S'),
+          title: Text('PinPoint - Friends'),
         ),
         body: Column(
           children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/friends_screen.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
@@ -30,6 +31,7 @@ class PinPointDrawer extends StatelessWidget {
       icon: Icons.pin_drop,
       page: MyPinsScreen(),
     ),
+    PageItem(title: 'Friends', icon: Icons.person, page: FriendsScreen())
   ];
 
   PinPointDrawer({String? title}) {
