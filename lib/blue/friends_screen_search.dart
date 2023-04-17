@@ -21,6 +21,14 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
     });
   }
 
+  bool cancelRequest(User user) {
+    return true;
+  }
+
+  bool sendRequest(User user) {
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -67,7 +75,7 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
   }
 
   Widget SearchResultCard(User friend) {
-    String buttonText = friend.requestSent ? 'AWAITING' : 'SEND REQUEST';
+    String buttonText = friend.requestSent ? 'CANCEL REQUEST' : 'SEND REQUEST';
     Color buttonColor =
         friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
 
@@ -115,7 +123,13 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
               children: [
                 !friend.isFriend
                     ? TextButton(
-                        onPressed: friend.requestSent ? null : () {},
+                        onPressed: friend.requestSent
+                            ? () {
+                                cancelRequest(friend);
+                              }
+                            : () {
+                                sendRequest(friend);
+                              },
                         child: Text(
                           buttonText,
                           style: TextStyle(
