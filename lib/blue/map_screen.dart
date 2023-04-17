@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
+import 'package:pinpoint/blue/classes/user.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
-
 
 class MapScreen extends StatefulWidget {
   Location? location;
+
   MapScreen([Location? location]) {
     this.location = location;
   }
@@ -25,7 +28,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     nearbyLocations = Location.example(4);
     pinnedLocations = Location.example(2);
 
-    this.selectedLocation = location;}
+    this.selectedLocation = location;
+  }
 
   @override
   void initState() {
@@ -63,14 +67,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return true;
   }
 
-  bool addPin(Location? location) {
+  Future<bool> addPin(Location? location) async {
+    User? user = getLoggedUser();
     if (location == null) return false;
-    return true;
+    if (user == null) return false;
+
+    return location.createPin(user!);
   }
 
-  bool removePin(Location? location) {
+  Future<bool> removePin(Location? location) async {
+    User? user = getLoggedUser();
     if (location == null) return false;
-    return true;
+    if (user == null) return false;
+
+    return location.removePin(user!);
   }
 
   @override
@@ -231,11 +241,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 onPressed: () {
                   addPin(selectedLocation);
                 },
-                child: Text('ADD PIN',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    )),
+                child: Text(
+                  'ADD PIN',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -372,7 +384,26 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ),
                 TextButton(
                   onPressed: () {
-                    removePin(selectedLocation);
+                    showConfirmationDialog(
+                        context: context,
+                        title: 'Remove Pin?',
+                        cancel: 'Cancel',
+                        submit: Text(
+                          'Yes, remove',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () async {
+                          bool success = await removePin(location);
+                          if (success) {
+                            // remove the entry from the list
+                            setState(() {
+                              pinnedLocations.remove(location);
+                            });
+                          }
+                        });
                   },
                   child: Text(
                     'REMOVE PIN',

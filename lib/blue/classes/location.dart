@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:pinpoint/blue/classes/user.dart';
+
 class Location {
   int id;
   String type;
@@ -18,18 +20,13 @@ class Location {
     required this.address,
   }): id = id ?? 0;
 
-  Future<bool> create() async {
+  Future<bool> createPin(User user) async {
     // TODO: create an entry, update the id too
     return true;
   }
 
-  Future<bool> update() async {
-    // TODO: using the id, update the fields
-    return true;
-  }
-
-  Future<bool> delete() async {
-    // TODO: using the id, delete the entry
+  Future<bool> removePin(User user) async {
+    // TODO: create an entry, update the id too
     return true;
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/note.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -27,39 +28,34 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
   }
 
   void deleteNote(Note note) {
-    showDialog(
+    showConfirmationDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Do you really want to delete the note?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'No, cancel',
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            TextButton(
-              child: Text(
-                'Yes, delete',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-              ),
-              onPressed: () {
-                // TODO: now actually delete it here
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
+      title: 'Delete the note?',
+      cancel: 'Cancel',
+      submit: Text(
+        'Yes, delete',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      ),
+      onPressed: () async {
+        // TODO: add real functionality here
+        bool success = await note.delete();
+        showNotification(context: context, text: success ? 'Deleted note!' : 'Error deleting note');
+
+        if (success) {
+          setState(() {
+            myNotes.remove(note);
+          });
+        }
       },
     );
   }
 
   void editNote(Note note) {
-    TextEditingController _textFieldController = TextEditingController(text: note.note);
+    TextEditingController _textFieldController =
+        TextEditingController(text: note.note);
 
     showDialog(
       context: context,
@@ -82,12 +78,18 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
                 'Edit Note',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              onPressed: () {
+              onPressed: () async {
                 String inputText = _textFieldController.text;
 
-                // TODO: actually make the note edit, make sure to check that the user is allowed
-                // to edit this note
-                print('edit note!');
+                note.note = inputText;
+                bool success = await note.update();
+
+                showNotification(context: context, text: success ? 'Modified note!' : 'Error modifying note');
+
+                if (success) {
+                  setState(() {});
+                }
+
                 Navigator.pop(context);
               },
             ),
@@ -246,7 +248,7 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "@${note.author}",
+                  "@${note.author.name}",
                   style: TextStyle(
                       fontSize: 14, color: Colors.black.withOpacity(0.5)),
                   textAlign: TextAlign.left,

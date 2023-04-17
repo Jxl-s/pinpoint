@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
+import 'package:pinpoint/blue/classes/note.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:pinpoint/blue/my_pins_notes_screen.dart';
 
@@ -24,13 +28,25 @@ class _MyPinsScreenState extends State<MyPinsScreen>
     sortPins();
   }
 
-  bool addNote(int locationId, String note) {
+  Future<bool> addNote(Location location, String note) async {
+    User? loggedUser = getLoggedUser();
     if (note.isEmpty) return false;
+    if (loggedUser == null) return false;
+    // create the new note
+
+    Note newNote = Note(
+      author: loggedUser!,
+      note: note,
+      location: location,
+    );
+
+    bool success = await newNote.create();
+    showNotification(context: context, text: success ? 'Added note!' : 'Error adding note');
 
     return true;
   }
 
-  void _showDialog(int locationId) {
+  void _showDialog(Location location) {
     TextEditingController _textFieldController = TextEditingController();
 
     showDialog(
@@ -58,7 +74,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                 String inputText = _textFieldController.text;
 
                 Navigator.pop(context);
-                addNote(locationId, inputText);
+                addNote(location, inputText);
               },
             ),
           ],
@@ -261,7 +277,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
               children: [
                 TextButton(
                   onPressed: () {
-                    _showDialog(location.id);
+                    _showDialog(location);
                   },
                   child: Text(
                     'ADD NOTE',

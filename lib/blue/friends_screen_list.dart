@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/friend.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
+import 'package:pinpoint/blue/classes/user.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/friends_screen_notes.dart';
 
 class FriendsScreenList extends StatefulWidget {
@@ -155,7 +157,39 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showConfirmationDialog(
+                      context: context,
+                      title: 'Unfriend user?',
+                      cancel: 'Cancel',
+                      submit: Text(
+                        'Yes, unfriend',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onPressed: () async {
+                        User? user = getLoggedUser();
+                        if (user == null) return;
+
+                        bool success = await user!.unfriend(friend);
+                        showNotification(
+                          context: context,
+                          text: success
+                              ? 'User unfriended!'
+                              : 'Error unfriending user',
+                        );
+
+                        if (success) {
+                          setState(() {
+                            friends.remove(friend);
+                            filteredFriends.remove(friend);
+                          });
+                        }
+                      },
+                    );
+                  },
                   child: Text(
                     'UNFRIEND',
                     style: TextStyle(

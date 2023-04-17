@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/friend.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import './components/drawer.dart';
 
 import './friends_screen_list.dart';

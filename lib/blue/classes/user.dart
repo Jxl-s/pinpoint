@@ -37,6 +37,16 @@ class User {
     return true;
   }
 
+  Future<bool> unfriend(User other) async {
+    // TODO: using the id, unfriend
+    return true;
+  }
+
+  Future<bool> accept(User other) async {
+    // TODO: accept the request
+    return true;
+  }
+
   static List<User> example(int amount) {
     List<User> users = [
       User(

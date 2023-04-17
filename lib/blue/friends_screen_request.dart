@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/friend.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
+import 'package:pinpoint/blue/classes/user.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 
-class FriendsScreenRequest extends StatelessWidget {
+class FriendsScreenRequest extends StatefulWidget {
   List<User> requests;
-
   FriendsScreenRequest(List<User> this.requests);
 
   @override
+  State<FriendsScreenRequest> createState() => _FriendsScreenRequestState(this.requests);
+}
+
+class _FriendsScreenRequestState extends State<FriendsScreenRequest> {
+  late BuildContext context;
+  List<User> requests;
+
+  _FriendsScreenRequestState(List<User> this.requests);
+  @override
   Widget build(BuildContext context) {
+    this.context = context;
+
     return Center(
       child: Column(
         children: [
@@ -24,7 +36,7 @@ class FriendsScreenRequest extends StatelessWidget {
           Expanded(
             child: ListView(
               shrinkWrap: true,
-              children: requests.map((e) => FriendCard(e)).toList(),
+              children: widget.requests.map((e) => FriendCard(e)).toList(),
             ),
           )
         ],
@@ -76,7 +88,24 @@ class FriendsScreenRequest extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    User? user = getLoggedUser();
+                    if (user == null) return;
+
+                    bool success = await user!.accept(friend);
+                    showNotification(
+                      context: context,
+                      text: success
+                          ? 'Request accepted!'
+                          : 'Error accepting request',
+                    );
+
+                    if (success) {
+                      setState(() {
+                        widget.requests.remove(friend);
+                      });
+                    }
+                  },
                   child: Text(
                     'ACCEPT REQUEST',
                     style: TextStyle(fontWeight: FontWeight.bold),
