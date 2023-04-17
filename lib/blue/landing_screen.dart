@@ -1,21 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends StatefulWidget {
+  @override
+  State<LandingScreen> createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
-    // check if the user is logged in
-    bool isLoggedIn = true;
-
-    if (isLoggedIn) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MapScreen()),
-      ).then((value) {
-        Navigator.pop(context);
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -23,17 +18,6 @@ class LandingScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        // add the temporary drawer thing here
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
       ),
       body: Container(
         width: double.infinity,

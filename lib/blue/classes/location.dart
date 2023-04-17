@@ -8,12 +8,30 @@ class Location {
   String address;
 
   Location({
-    required this.id,
+    // optional props
+    int? id,
+
+    // required props
     required this.type,
     required this.distance,
     required this.name,
     required this.address,
-  });
+  }): id = id ?? 0;
+
+  Future<bool> create() async {
+    // TODO: create an entry, update the id too
+    return true;
+  }
+
+  Future<bool> update() async {
+    // TODO: using the id, update the fields
+    return true;
+  }
+
+  Future<bool> delete() async {
+    // TODO: using the id, delete the entry
+    return true;
+  }
 
   String getDistanceString() {
     if (this.distance >= 1000) {

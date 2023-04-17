@@ -9,13 +9,33 @@ class User {
   bool requestSent;
 
   User({
-    required this.id,
+    // optional props
+    int? id,
+    bool? isFriend,
+    bool? requestSent,
+
+    // required props
     required this.name,
     required this.email,
     required this.avatar,
-    required this.isFriend,
-    required this.requestSent,
-  });
+  })  : id = id ?? 0,
+        isFriend = isFriend ?? false,
+        requestSent = requestSent ?? false;
+
+  Future<bool> create() async {
+    // TODO: create an entry, update the id too
+    return true;
+  }
+
+  Future<bool> update() async {
+    // TODO: using the id, update the fields
+    return true;
+  }
+
+  Future<bool> delete() async {
+    // TODO: using the id, delete the entry
+    return true;
+  }
 
   static List<User> example(int amount) {
     List<User> users = [

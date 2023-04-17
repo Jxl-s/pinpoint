@@ -6,16 +6,35 @@ class Note {
   int id;
   String author;
   String note;
-  DateTime date;
   Location location;
+  DateTime date;
 
   Note({
-    required this.id,
+    // optional props
+    int? id,
+    DateTime? date,
+
+    // required props
     required this.author,
     required this.note,
-    required this.date,
     required this.location,
-  });
+  })  : date = date ?? DateTime.now(),
+        id = id ?? 0;
+
+  Future<bool> create() async {
+    // TODO: create an entry, update the id too
+    return true;
+  }
+
+  Future<bool> update() async {
+    // TODO: using the id, update the fields
+    return true;
+  }
+
+  Future<bool> delete() async {
+    // TODO: using the id, delete the entry
+    return true;
+  }
 
   static List<Note> example(int amount) {
     List<Note> notes = [
