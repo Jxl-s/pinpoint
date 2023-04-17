@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/components/drawer.dart';
-import 'package:pinpoint/blue/friendTabs/friendList.dart';
-import 'package:pinpoint/blue/friendTabs/request.dart';
-import 'package:pinpoint/blue/friendTabs/search.dart';
+import './components/drawer.dart';
+
+import './friends_screen_list.dart';
+import './friends_screen_request.dart';
+import './friends_screen_search.dart';
 
 class FriendsScreen extends StatelessWidget {
   const FriendsScreen({Key? key}) : super(key: key);
@@ -52,9 +53,9 @@ class FriendsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: TabBarView(
             children: [
-              FriendList(),
-              Request(),
-              Search()
+              FriendsScreenList(),
+              FriendsScreenRequest(),
+              FriendsScreenSearch(),
               // MapPage(),
               // PinsPage(),
             ],
@@ -63,5 +64,4 @@ class FriendsScreen extends StatelessWidget {
       ),
     );
   }
-
 }
