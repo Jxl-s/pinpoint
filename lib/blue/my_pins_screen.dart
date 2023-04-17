@@ -23,7 +23,13 @@ class _MyPinsScreenState extends State<MyPinsScreen>
     sortPins();
   }
 
-  void _showDialog() {
+  bool addNote(int locationId, String note) {
+    if (note.isEmpty) return false;
+
+    return true;
+  }
+
+  void _showDialog(int locationId) {
     TextEditingController _textFieldController = TextEditingController();
 
     showDialog(
@@ -43,11 +49,15 @@ class _MyPinsScreenState extends State<MyPinsScreen>
               },
             ),
             TextButton(
-              child: Text('Submit'),
+              child: Text(
+                'Create Note',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onPressed: () {
                 String inputText = _textFieldController.text;
-                // Do something with the input text
+
                 Navigator.pop(context);
+                addNote(locationId, inputText);
               },
             ),
           ],
@@ -250,7 +260,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
               children: [
                 TextButton(
                   onPressed: () {
-                    _showDialog();
+                    _showDialog(location.id);
                   },
                   child: Text(
                     'ADD NOTE',
