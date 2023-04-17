@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/map_screen.dart';
 
 class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // check if the user is logged in
+    bool isLoggedIn = true;
+
+    if (isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MapScreen()),
+      ).then((value) {
+        Navigator.pop(context);
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(

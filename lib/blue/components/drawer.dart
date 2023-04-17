@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
+import 'package:pinpoint/blue/my_pins_screen.dart';
 
 class PageItem {
   String title;
@@ -18,7 +20,16 @@ class PinPointDrawer extends StatelessWidget {
   late BuildContext context;
 
   List<PageItem> pages = [
-    PageItem(title: 'Map View', icon: Icons.map, page: MapScreen())
+    PageItem(
+      title: 'Map View',
+      icon: Icons.map,
+      page: MapScreen(),
+    ),
+    PageItem(
+      title: 'My Pins',
+      icon: Icons.pin_drop,
+      page: MyPinsScreen(),
+    ),
   ];
 
   PinPointDrawer({String? title}) {
@@ -77,6 +88,7 @@ class PinPointDrawer extends StatelessWidget {
   }
 
   Widget PageButton(PageItem page) {
+
     ButtonStyle buttonStyle = title == page.title
         ? TextButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.blue)
@@ -90,10 +102,12 @@ class PinPointDrawer extends StatelessWidget {
         onPressed: () {
           if (title == page.title) return;
 
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => page.page),
-          );
+          ).then((value) {
+            Navigator.pop(context);
+          });
         },
         style: buttonStyle,
         child: Row(
@@ -102,7 +116,7 @@ class PinPointDrawer extends StatelessWidget {
             SizedBox(
               width: 10,
             ),
-            Text(title)
+            Text(page.title)
           ],
         ),
       ),

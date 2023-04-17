@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 
-class Location {
-  String type;
-  String distance;
-  String name;
-  String address;
-
-  Location({
-    required this.type,
-    required this.distance,
-    required this.name,
-    required this.address,
-  });
-}
 
 class MapScreen extends StatefulWidget {
   @override
@@ -29,41 +17,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   _MapScreenState() {
     // Probably fetch the data here?
-    nearbyLocations.add(
-      Location(
-        type: "College",
-        distance: "200 m",
-        name: "Vanier College",
-        address: "821 Sainte Croix Ave, Saint-Laurent, Quebec H4L 3X9",
-      ),
-    );
-
-    nearbyLocations.add(
-      Location(
-        type: "Pizza Restaurant",
-        distance: "3.2 km",
-        name: "Papa John's Pizza",
-        address: "1320 De l'Église St, Saint-Laurent, Quebec H4L 2G7",
-      ),
-    );
-
-    nearbyLocations.add(
-      Location(
-        type: "Subway Station",
-        distance: "33.3 km",
-        name: "Metro Cote Vertu",
-        address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
-      ),
-    );
-
-    pinnedLocations.add(
-      Location(
-        type: "Subway Station",
-        distance: "33.3 km",
-        name: "Metro Cote Vertu",
-        address: "1010 Boulevard Cote Vertu Ouest, Saint-Laurent, Quebec H4L",
-      ),
-    );
+    nearbyLocations = Location.example(4);
+    pinnedLocations = Location.example(2);
   }
 
   @override
@@ -208,7 +163,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   ],
                 ),
                 Text(
-                  location.distance,
+                  location.getDistanceString(),
                   style: TextStyle(
                     color: Colors.black.withOpacity(0.5),
                     fontSize: 16,
@@ -367,7 +322,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   ],
                 ),
                 Text(
-                  location.distance,
+                  location.getDistanceString(),
                   style: TextStyle(
                     color: Colors.black.withOpacity(0.5),
                     fontSize: 16,
