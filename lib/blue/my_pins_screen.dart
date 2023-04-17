@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
+import 'package:pinpoint/blue/my_pins_notes_screen.dart';
 
 class MyPinsScreen extends StatefulWidget {
   @override
@@ -268,7 +269,14 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyPinsNotesScreen(location.id),
+                      ),
+                    );
+                  },
                   child: Text(
                     'VIEW NOTES',
                     style: TextStyle(
