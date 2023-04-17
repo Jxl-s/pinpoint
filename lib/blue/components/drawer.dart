@@ -90,7 +90,6 @@ class PinPointDrawer extends StatelessWidget {
   }
 
   Widget PageButton(PageItem page) {
-
     ButtonStyle buttonStyle = title == page.title
         ? TextButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.blue)
@@ -99,7 +98,7 @@ class PinPointDrawer extends StatelessWidget {
           );
 
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 4, bottom: 4),
       child: TextButton(
         onPressed: () {
           if (title == page.title) return;

@@ -4,8 +4,13 @@ import 'package:pinpoint/blue/components/drawer.dart';
 
 
 class MapScreen extends StatefulWidget {
+  Location? location;
+  MapScreen([Location? location]) {
+    this.location = location;
+  }
+
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<MapScreen> createState() => _MapScreenState(this.location);
 }
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
@@ -15,11 +20,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   List<Location> nearbyLocations = [];
   List<Location> pinnedLocations = [];
 
-  _MapScreenState() {
+  _MapScreenState([Location? location]) {
     // Probably fetch the data here?
     nearbyLocations = Location.example(4);
     pinnedLocations = Location.example(2);
-  }
+
+    this.selectedLocation = location;}
 
   @override
   void initState() {
@@ -29,6 +35,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       length: 3,
       vsync: this,
     );
+
+    if (this.selectedLocation != null) {
+      this._tabController.animateTo(1);
+    }
   }
 
   @override

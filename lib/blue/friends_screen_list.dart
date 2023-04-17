@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/friend.dart';
+import 'package:pinpoint/blue/friends_screen_notes.dart';
 
 class FriendsScreenList extends StatefulWidget {
   List<User> friends = [];
@@ -7,7 +8,8 @@ class FriendsScreenList extends StatefulWidget {
   FriendsScreenList(this.friends);
 
   @override
-  State<FriendsScreenList> createState() => _FriendsScreenListState(this.friends);
+  State<FriendsScreenList> createState() =>
+      _FriendsScreenListState(this.friends);
 }
 
 class _FriendsScreenListState extends State<FriendsScreenList> {
@@ -137,7 +139,14 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FriendsScreenNotes(friend),
+                      ),
+                    );
+                  },
                   child: Text(
                     'VIEW NOTES',
                     style: TextStyle(
