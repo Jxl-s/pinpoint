@@ -67,6 +67,10 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
   }
 
   Widget SearchResultCard(User friend) {
+    String buttonText = friend.requestSent ? 'AWAITING' : 'SEND REQUEST';
+    Color buttonColor =
+        friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
+
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Container(
@@ -109,13 +113,20 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'SEND REQUEST',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
+                !friend.isFriend
+                    ? TextButton(
+                        onPressed: friend.requestSent ? null : () {},
+                        child: Text(
+                          buttonText,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: buttonColor,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        height: 16.0,
+                      ),
               ],
             )
           ],
