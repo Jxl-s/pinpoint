@@ -61,7 +61,7 @@ class FriendsScreen extends StatelessWidget {
           child: TabBarView(
             children: [
               FriendsScreenList(this.friends),
-              FriendsScreenRequest(this.requests),
+              FriendsScreenRequest(this.requests, this.friends),
               FriendsScreenSearch(),
               // MapPage(),
               // PinsPage(),

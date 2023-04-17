@@ -5,17 +5,20 @@ import 'package:pinpoint/blue/components/confirm_dialog.dart';
 
 class FriendsScreenRequest extends StatefulWidget {
   List<User> requests;
-  FriendsScreenRequest(List<User> this.requests);
+  List<User> friends;
+
+  FriendsScreenRequest(List<User> this.requests, List<User> this.friends);
 
   @override
-  State<FriendsScreenRequest> createState() => _FriendsScreenRequestState(this.requests);
+  State<FriendsScreenRequest> createState() => _FriendsScreenRequestState(this.requests, this.friends);
 }
 
 class _FriendsScreenRequestState extends State<FriendsScreenRequest> {
   late BuildContext context;
   List<User> requests;
+  List<User> friends;
 
-  _FriendsScreenRequestState(List<User> this.requests);
+  _FriendsScreenRequestState(List<User> this.requests, List<User> this.friends);
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -36,7 +39,7 @@ class _FriendsScreenRequestState extends State<FriendsScreenRequest> {
           Expanded(
             child: ListView(
               shrinkWrap: true,
-              children: widget.requests.map((e) => FriendCard(e)).toList(),
+              children: requests.map((e) => FriendCard(e)).toList(),
             ),
           )
         ],
@@ -102,7 +105,8 @@ class _FriendsScreenRequestState extends State<FriendsScreenRequest> {
 
                     if (success) {
                       setState(() {
-                        widget.requests.remove(friend);
+                        requests.remove(friend);
+                        friends.add(friend);
                       });
                     }
                   },

@@ -37,6 +37,16 @@ class User {
     return true;
   }
 
+  Future<bool> addFriend(User other) async {
+    // TODO: create a request
+    return true;
+  }
+
+  Future<bool> cancel(User other) async {
+    // TODO: remove the request
+    return true;
+  }
+
   Future<bool> unfriend(User other) async {
     // TODO: using the id, unfriend
     return true;

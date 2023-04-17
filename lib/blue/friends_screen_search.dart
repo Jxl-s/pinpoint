@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
 
 class FriendsScreenSearch extends StatefulWidget {
   @override
@@ -21,11 +23,35 @@ class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
     });
   }
 
-  bool cancelRequest(User user) {
+  Future<bool> cancelRequest(User user) async {
+    User? me = getLoggedUser();
+    if (me == null) return false;
+
+    bool success = await me.cancel(user);
+    showNotification(context: context, text: success ? 'Request cancelled!' : 'Error cancelling request');
+
+    if (success) {
+      setState(() {
+        user.requestSent = false;
+      });
+    }
+
     return true;
   }
 
-  bool sendRequest(User user) {
+  Future<bool> sendRequest(User user) async {
+    User? me = getLoggedUser();
+    if (me == null) return false;
+
+    bool success = await me.addFriend(user);
+    showNotification(context: context, text: success ? 'Request sent!' : 'Error sending request');
+
+    if (success) {
+      setState(() {
+        user.requestSent = true;
+      });
+    }
+
     return true;
   }
 
