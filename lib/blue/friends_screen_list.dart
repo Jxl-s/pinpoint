@@ -115,7 +115,7 @@ class _FriendsScreenListState extends State<FriendsScreenList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      friend.name,
+                      "@${friend.name}",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(friend.email),

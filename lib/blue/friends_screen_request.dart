@@ -64,7 +64,7 @@ class FriendsScreenRequest extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      friend.name,
+                      "@${friend.name}",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(friend.email),

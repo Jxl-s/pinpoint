@@ -1,85 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/friend.dart';
 
-class FriendsScreenSearch extends StatelessWidget {
-  const FriendsScreenSearch({Key? key}) : super(key: key);
+class FriendsScreenSearch extends StatefulWidget {
+  @override
+  State<FriendsScreenSearch> createState() => _FriendsScreenSearchState();
+}
+
+class _FriendsScreenSearchState extends State<FriendsScreenSearch> {
+  List<User> searchResults = [];
+  TextEditingController _searchFieldController = new TextEditingController();
+
+  _FriendsScreenSearchState() {
+    searchResults = User.example(10);
+  }
+
+  void searchUsers(String user) {
+    // will be implemented in the future
+    setState(() {
+      searchResults = User.example(10);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text('Add Friends'),
-            SizedBox(
-              width: 375,
-              height: 50,
-              child: TextField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  prefixIcon: Icon(Icons.search),
-                  hintText: 'Search People',
-                ),
-              ),
+      child: Column(
+        children: [
+          Text(
+            'Search',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
-            Container(
-              height: 629,
-              width: double.maxFinite,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  FriendCard("Jax Suan Luh", "jsl@gmail.com", 'https://googleflutter.com/sample_image.jpg'),
-                  FriendCard("Tuh Chahsze", "ts@gmail.com", 'https://ichef.bbci.co.uk/news/976/cpsprodpb/F382/production/_123883326_852a3a31-69d7-4849-81c7-8087bf630251.jpg'),
-                ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            child: TextField(
+              controller: _searchFieldController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: Icon(Icons.search),
+                hintText: 'Search Users',
               ),
-            )
-          ],
-        ),
+              onSubmitted: ((value) {
+                searchUsers(value);
+              }),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: ListView(
+              children: searchResults.map((e) => SearchResultCard(e)).toList(),
+            ),
+          ),
+        ],
       ),
+      // ),
     );
   }
 
-  Widget FriendCard(String name, String email, String image) {
-    return Container(
-      margin: const EdgeInsets.all(10.0),
-      width: 450,
-      height: 98,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
+  Widget SearchResultCard(User friend) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
                       image: NetworkImage(
-                          image),
-                      fit: BoxFit.fill),
+                        friend.avatar,
+                      ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "@${friend.name}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(friend.email),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'SEND REQUEST',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(email),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(onPressed: () {}, child: Text('Send Friend Request')),
-            ],
-          )
-        ],
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
