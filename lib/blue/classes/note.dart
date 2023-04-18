@@ -33,6 +33,11 @@ class Note {
     return Note.example(5);
   }
 
+  static Future<List<Note>> getFriendNotes(User user, Location location) async {
+    // TODO: maybe a joined query for this one
+    return Note.example(5);
+  }
+
   Future<bool> create() async {
     // TODO: create an entry, update the id too
     return true;

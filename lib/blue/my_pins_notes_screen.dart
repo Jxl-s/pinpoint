@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/note.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -21,11 +23,26 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
   List<Note> myNotes = [];
   List<Note> friendNotes = [];
 
-  _MyPinsNotesScreenState(this.location) {
-    // TODO: fetch the notes in here
-    myNotes = Note.example(5);
-    friendNotes = Note.example(2);
+  Future<void> fetchData() async {
+    User? user = getLoggedUser();
+    if (user != null) {
+      List<Note> myNotes = await Note.getLocationNotes(user, location);
+      List<Note> friendNotes = await Note.getFriendNotes(user, location);
+
+      setState(() {
+        this.myNotes = myNotes;
+        this.friendNotes = friendNotes;
+      });
+    }
   }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  _MyPinsNotesScreenState(this.location);
 
   void deleteNote(Note note) {
     showConfirmationDialog(
