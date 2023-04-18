@@ -6,6 +6,7 @@ import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
+import 'package:pinpoint/main.dart';
 
 class PageItem {
   String title;
@@ -84,61 +85,92 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
     this.context = context;
 
     return Drawer(
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(child: Container()), // fill out empty space
-
-                    Container(
-                      // margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-                      width: 50,
-                      height: 50,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                    DrawerHeader(
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: NetworkImage(loggedUser?.avatar ?? ''),
-                            fit: BoxFit.fill),
+                        color: Colors.blue,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(child: Container()), // fill out empty space
+
+                          Container(
+                            // margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: NetworkImage(loggedUser?.avatar ?? ''),
+                                  fit: BoxFit.fill),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "@${loggedUser?.name ?? 'name'}",
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.75),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                loggedUser?.email ?? 'email',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.5),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "@${loggedUser?.name ?? 'name'}",
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.75),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          loggedUser?.email ?? 'email',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                  ] +
+                  pages.map((e) => PageButton(e)).toList(),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () {
+                AuthService.signOut().then((value) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Main()),
+                  ).then((value) {
+                    Navigator.pop(context);
+                  });
+                });
+              },
+              child: Text(
+                'SIGN OUT',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ] +
-            pages.map((e) => PageButton(e)).toList(),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
       ),
     );
   }

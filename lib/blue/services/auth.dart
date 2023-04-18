@@ -11,8 +11,12 @@ class AuthService {
 
   static UserClass.User? loggedUser;
 
+  static Future<void> signOut() async {
+    loggedUser = null;
+    await FirebaseAuth.instance.signOut();
+  }
+
   static Future<UserClass.User?> getLoggedUser() async {
-    print(loggedUser);
     if (loggedUser == null) {
       // try finding it
       final User? user = FirebaseAuth.instance.currentUser;

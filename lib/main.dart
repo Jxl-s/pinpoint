@@ -18,7 +18,10 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
   // Main({super.key});
-  Widget screen = LandingScreen();
+  late Widget screen;
+  _MainState() {
+    screen = LandingScreen(onSignin: fetchUser);
+  }
 
   Future<void> fetchUser() async {
     User? user = await AuthService.getLoggedUser();
@@ -37,6 +40,7 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    print(screen);
     return MaterialApp(
       title: 'PinPoint',
       theme: ThemeData(

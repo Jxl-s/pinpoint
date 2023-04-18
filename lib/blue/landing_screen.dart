@@ -7,6 +7,9 @@ import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 
 class LandingScreen extends StatefulWidget {
+  Function onSignin;
+  LandingScreen({required Function this.onSignin});
+
   @override
   State<LandingScreen> createState() => _LandingScreenState();
 }
@@ -48,12 +51,16 @@ class _LandingScreenState extends State<LandingScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  signinButton(provider: "Google", onPressed: () async {
-                    User user = await AuthService.doGoogleSignin();
-                    print(user.name);
-                  }),
-                  signinButton(provider: "Facebook", onPressed: () {}),
-                  signinButton(provider: "Discord", onPressed: () {}),
+                  signinButton(
+                      provider: "Google",
+                      onPressed: () async {
+                        User user = await AuthService.doGoogleSignin();
+                        if (user != null) {
+                          widget.onSignin();
+                        }
+                      }),
+                  // signinButton(provider: "Facebook", onPressed: () {}),
+                  // signinButton(provider: "Discord", onPressed: () {}),
                 ],
               ),
             ),
