@@ -13,9 +13,9 @@ class User {
 
   static CollectionReference userCollection = DataService.collection('users');
   static CollectionReference friendCollection =
-  DataService.collection('friends');
+      DataService.collection('friends');
   static CollectionReference friendRequestsCollection =
-  DataService.collection('friend_requests');
+      DataService.collection('friend_requests');
 
   User({
     // optional props
@@ -27,8 +27,7 @@ class User {
     required this.name,
     required this.email,
     required this.avatar,
-  })
-      : id = id ?? '',
+  })  : id = id ?? '',
         isFriend = isFriend ?? false,
         requestSent = requestSent ?? false;
 
@@ -65,10 +64,11 @@ class User {
       // then check if it has a pending request
       QuerySnapshot hasRequestQuery = await friendRequestsCollection
           .where('request_asker', isEqualTo: loggedUser!.id)
+          .where('request_target', isEqualTo: r.get('user_id'))
           .get();
 
-      bool isFriend = isFriendQuery.docs.isEmpty;
-      bool hasRequest = hasRequestQuery.docs.isEmpty;
+      bool isFriend = !isFriendQuery.docs.isEmpty;
+      bool hasRequest = !hasRequestQuery.docs.isEmpty;
 
       friends.add(
         User(
@@ -110,7 +110,7 @@ class User {
 
   Future<List<User>> getIncomingRequests() async {
     QuerySnapshot results =
-    await userCollection.where('request_receiver', isEqualTo: id).get();
+        await userCollection.where('request_receiver', isEqualTo: id).get();
 
     List<User> friends = [];
     for (int i = 0; i < results.docs.length; i++) {
@@ -148,7 +148,7 @@ class User {
     // TODO: using the id, update the fields
     try {
       QuerySnapshot q =
-      await userCollection.where('user_id', isEqualTo: id).limit(1).get();
+          await userCollection.where('user_id', isEqualTo: id).limit(1).get();
 
       if (q.docs.length <= 0) return false;
 
@@ -171,8 +171,47 @@ class User {
   }
 
   Future<bool> addFriend(User other) async {
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) {
+      return false;
+    }
+
     // TODO: create a request
-    return true;
+    // make sure there's no current entry for that specific
+    // relation already
+    QuerySnapshot hasRequestQuery = await friendRequestsCollection
+        .where('request_asker', isEqualTo: loggedUser!.id)
+        .where('request_target', isEqualTo: other.id)
+        .get();
+
+    if (!hasRequestQuery.docs.isEmpty) {
+      return false;
+    }
+
+    // add the request now
+    try {
+      // if there is a request the other way around, then they are now friends
+      QuerySnapshot hasRequestQuery2 = await friendRequestsCollection
+          .where('request_target', isEqualTo: loggedUser!.id)
+          .where('request_asker', isEqualTo: other.id)
+          .get();
+
+      if (hasRequestQuery2.docs.isNotEmpty) {
+        // make the friends
+        await friendCollection
+            .add({'friend_id_1': loggedUser!.id, 'friend_id_2': other.id});
+      } else {
+        // make the relation
+        await friendRequestsCollection.add({
+          'request_asker': loggedUser!.id,
+          'request_target': other.id,
+        });
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> cancel(User other) async {
