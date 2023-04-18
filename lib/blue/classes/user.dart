@@ -87,20 +87,33 @@ class User {
 
   Future<List<User>> getFriends() async {
     // TODO: using this user id, fetch the friends
-    QuerySnapshot results = await userCollection
-        .where('friend_1', isEqualTo: id)
-        .where('friend_2', isEqualTo: id)
-        .get();
+    QuerySnapshot results =
+        await friendCollection.where('friend_id_1', isEqualTo: id).get();
 
+    QuerySnapshot results2 =
+        await friendCollection.where('friend_id_2', isEqualTo: id).get();
+
+    var mergedResults = [...results.docs, ...results2.docs];
     List<User> friends = [];
-    for (int i = 0; i < results.docs.length; i++) {
-      var r = results.docs[i];
+    print("FOUND ${mergedResults.length} FRIENDS");
+    for (int i = 0; i < mergedResults.length; i++) {
+      var r = mergedResults[i];
+
+      String other_friend = r.get('friend_id_1') == id
+          ? r.get('friend_id_2')
+          : r.get('friend_id_1');
+
+      QuerySnapshot userQuery =
+          await userCollection.where('user_id', isEqualTo: other_friend).get();
+
+      if (userQuery.docs.isEmpty) continue;
+
       friends.add(
         User(
-          id: r.get('user_id'),
-          name: r.get('name'),
-          email: r.get('email'),
-          avatar: r.get('avatar'),
+          id: userQuery.docs[0].get('user_id'),
+          name: userQuery.docs[0].get('name'),
+          email: userQuery.docs[0].get('email'),
+          avatar: userQuery.docs[0].get('avatar'),
         ),
       );
     }
@@ -109,18 +122,28 @@ class User {
   }
 
   Future<List<User>> getIncomingRequests() async {
-    QuerySnapshot results =
-        await userCollection.where('request_receiver', isEqualTo: id).get();
+    QuerySnapshot results = await friendRequestsCollection
+        .where('request_target', isEqualTo: id)
+        .get();
 
     List<User> friends = [];
+    print("${results.docs.length} FRIENDS REQUESTS FOUND for ${id}!");
     for (int i = 0; i < results.docs.length; i++) {
       var r = results.docs[i];
+
+      // fetch the user from the asker id
+      String askerId = r.get("request_asker");
+      QuerySnapshot userQuery =
+          await userCollection.where('user_id', isEqualTo: askerId).get();
+
+      if (userQuery.docs.isEmpty) continue;
+
       friends.add(
         User(
-          id: r.get('user_id'),
-          name: r.get('name'),
-          email: r.get('email'),
-          avatar: r.get('avatar'),
+          id: userQuery.docs[0].get('user_id'),
+          name: userQuery.docs[0].get('name'),
+          email: userQuery.docs[0].get('email'),
+          avatar: userQuery.docs[0].get('avatar'),
         ),
       );
     }
@@ -216,17 +239,81 @@ class User {
 
   Future<bool> cancel(User other) async {
     // TODO: remove the request
-    return true;
+    // find the request, then delete it
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) {
+      return false;
+    }
+
+    QuerySnapshot requestQuery = await friendRequestsCollection
+        .where('request_asker', isEqualTo: loggedUser!.id)
+        .where('request_target', isEqualTo: other.id)
+        .get();
+
+    if (requestQuery.docs.isEmpty) return false;
+
+    try {
+      friendRequestsCollection.doc(requestQuery.docs[0].id).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> unfriend(User other) async {
     // TODO: using the id, unfriend
-    return true;
+    // find the rqeuest
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) {
+      return false;
+    }
+
+    QuerySnapshot requestQuery =
+        await friendCollection.where('friend_id_1', isEqualTo: other.id).get();
+
+    QuerySnapshot requestQuery2 =
+        await friendCollection.where('friend_id_2', isEqualTo: other.id).get();
+
+    var mergedSnapshots = [...requestQuery.docs, ...requestQuery2.docs];
+    if (mergedSnapshots.isEmpty) return false;
+
+    try {
+      // delete the query, and create the friends
+      await friendCollection.doc(mergedSnapshots[0].id).delete();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> accept(User other) async {
     // TODO: accept the request
-    return true;
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) {
+      return false;
+    }
+
+    try {
+      QuerySnapshot hasRequestQuery = await friendRequestsCollection
+          .where('request_target', isEqualTo: loggedUser!.id)
+          .where('request_asker', isEqualTo: other.id)
+          .get();
+
+      if (hasRequestQuery.docs.isEmpty) return false;
+
+      // delete the request
+      await friendRequestsCollection
+          .doc(hasRequestQuery.docs[0].id)
+          .delete(); // make the friends
+
+      await friendCollection
+          .add({'friend_id_1': loggedUser!.id, 'friend_id_2': other.id});
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static List<User> example(int amount) {
