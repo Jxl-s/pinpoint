@@ -94,30 +94,42 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
-                      child: Text(
-                        'PinPoint',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
+                    Expanded(child: Container()), // fill out empty space
+
+                    Container(
+                      // margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: NetworkImage(loggedUser?.avatar ?? ''),
+                            fit: BoxFit.fill),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "@${loggedUser?.name ?? 'name'}",
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.75),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600),
                         ),
-                      ),
-                    ),
-                    Text(
-                      "@${loggedUser?.name ?? 'name'}",
-                      style: TextStyle(
-                          color: Colors.white.withOpacity(0.75),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      loggedUser?.email ?? 'email',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
-                        fontSize: 14,
-                      ),
+                        Text(
+                          loggedUser?.email ?? 'email',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 10,
