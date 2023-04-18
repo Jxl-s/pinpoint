@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/friends_screen_notes.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 import './components/drawer.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Future<void> fetchData() async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
     if (user != null) {
       List<User> friends = await user.getFriends();
       List<User> requests = await user.getIncomingRequests();
@@ -242,7 +242,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         ),
                       ),
                       onPressed: () async {
-                        User? user = getLoggedUser();
+                        User? user = await AuthService.getLoggedUser();
                         if (user == null) return;
 
                         bool success = await user!.unfriend(friend);
@@ -346,7 +346,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
               children: [
                 TextButton(
                   onPressed: () async {
-                    User? user = getLoggedUser();
+                    User? user = await AuthService.getLoggedUser();
                     if (user == null) return;
 
                     bool success = await user!.accept(friend);
@@ -389,7 +389,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Future<bool> cancelRequest(User user) async {
-    User? me = getLoggedUser();
+    User? me = await AuthService.getLoggedUser();
     if (me == null) return false;
 
     bool success = await me.cancel(user);
@@ -405,7 +405,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Future<bool> sendRequest(User user) async {
-    User? me = getLoggedUser();
+    User? me = await AuthService.getLoggedUser();
     if (me == null) return false;
 
     bool success = await me.addFriend(user);

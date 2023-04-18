@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/map_screen.dart';

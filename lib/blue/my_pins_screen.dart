@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:pinpoint/blue/my_pins_notes_screen.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 
 class MyPinsScreen extends StatefulWidget {
   @override
@@ -22,7 +22,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
   List<Location> pinnedLocations = [];
 
   Future<void> fetchData() async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
     if (user != null) {
       List<Location> locations = await Location.getPins(user);
       
@@ -39,7 +39,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
   }
   
   Future<bool> addNote(Location location, String note) async {
-    User? loggedUser = getLoggedUser();
+    User? loggedUser = await AuthService.getLoggedUser();
     if (note.isEmpty) return false;
     if (loggedUser == null) return false;
     // create the new note

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 
 class MapScreen extends StatefulWidget {
   Location? location;
@@ -24,7 +24,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   List<Location> pinnedLocations = [];
 
   Future<void> fetchData() async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
 
     if (user != null) {
       List<Location> nearby = await Location.getNearby();
@@ -80,7 +80,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Future<bool> addPin(Location? location) async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
     if (location == null) return false;
     if (user == null) return false;
 
@@ -88,7 +88,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Future<bool> removePin(Location? location) async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
     if (location == null) return false;
     if (user == null) return false;
 

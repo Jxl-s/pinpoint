@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/map_screen.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 
 class LandingScreen extends StatefulWidget {
   @override
@@ -45,7 +48,10 @@ class _LandingScreenState extends State<LandingScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  signinButton(provider: "Google", onPressed: () {}),
+                  signinButton(provider: "Google", onPressed: () async {
+                    User user = await AuthService.doGoogleSignin();
+                    print(user.name);
+                  }),
                   signinButton(provider: "Facebook", onPressed: () {}),
                   signinButton(provider: "Discord", onPressed: () {}),
                 ],

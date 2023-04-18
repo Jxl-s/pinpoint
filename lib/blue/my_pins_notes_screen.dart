@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MyPinsNotesScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
   List<Note> friendNotes = [];
 
   Future<void> fetchData() async {
-    User? user = getLoggedUser();
+    User? user = await AuthService.getLoggedUser();
     if (user != null) {
       List<Note> myNotes = await Note.getLocationNotes(user, location);
       List<Note> friendNotes = await Note.getFriendNotes(user, location);

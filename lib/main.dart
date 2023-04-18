@@ -1,19 +1,39 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(Main());
 }
 
-class Main extends StatelessWidget {
-  Main({super.key});
+class Main extends StatefulWidget {
+  @override
+  State<Main> createState() => _MainState();
+}
 
-  final Widget screen = getLoggedUser() == null ? LandingScreen() : MapScreen();
+class _MainState extends State<Main> {
+  // Main({super.key});
+  Widget screen = LandingScreen();
+
+  Future<void> fetchUser() async {
+    User? user = await AuthService.getLoggedUser();
+    if (user != null) {
+      setState(() {
+        screen = MapScreen();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUser();
+  }
 
   @override
   Widget build(BuildContext context) {

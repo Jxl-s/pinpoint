@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/friends_screen.dart';
 import 'package:pinpoint/blue/friends_screen_notes.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 
 class PageItem {
   String title;
@@ -19,41 +19,69 @@ class PageItem {
   });
 }
 
-class PinPointDrawer extends StatelessWidget {
+class PinPointDrawer extends StatefulWidget {
   String title = "";
-  late BuildContext context;
-
-  List<PageItem> pages = [
-    PageItem(
-      title: 'Map View',
-      icon: Icons.map,
-      page: MapScreen(),
-    ),
-    PageItem(
-      title: 'My Pins',
-      icon: Icons.pin_drop,
-      page: MyPinsScreen(),
-    ),
-    PageItem(
-      title: 'Friends',
-      icon: Icons.person,
-      page: FriendsScreen(),
-    ),
-    PageItem(
-      title: 'View My Notes',
-      icon: Icons.note,
-      page: FriendsScreenNotes(getLoggedUser()!),
-    ),
-  ];
 
   PinPointDrawer({String? title}) {
     this.title = title ?? "";
   }
 
   @override
+  State<PinPointDrawer> createState() => _PinPointDrawerState();
+}
+
+class _PinPointDrawerState extends State<PinPointDrawer> {
+  User? loggedUser;
+
+  late BuildContext context;
+
+  Future<User?> fetchUser() async {
+    User? user = await AuthService.getLoggedUser();
+
+    setState(() {
+      loggedUser = user;
+    });
+
+    return user;
+  }
+
+  late List<PageItem> pages;
+
+  _PinPointDrawerState() {
+    this.pages = [
+      PageItem(
+        title: 'Map View',
+        icon: Icons.map,
+        page: MapScreen(),
+      ),
+      PageItem(
+        title: 'My Pins',
+        icon: Icons.pin_drop,
+        page: MyPinsScreen(),
+      ),
+      PageItem(
+        title: 'Friends',
+        icon: Icons.person,
+        page: FriendsScreen(),
+      ),
+    ];
+
+    fetchUser().then((value) {
+      setState(() {
+        this.pages.add(
+              PageItem(
+                title: 'View My Notes',
+                icon: Icons.note,
+                page: FriendsScreenNotes(value!),
+              ),
+            );
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     this.context = context;
-    User user = getLoggedUser() ?? User.example(1)[0];
 
     return Drawer(
       child: ListView(
@@ -78,14 +106,14 @@ class PinPointDrawer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "@${user.name}",
+                      "@${loggedUser?.name ?? 'name'}",
                       style: TextStyle(
                           color: Colors.white.withOpacity(0.75),
                           fontSize: 18,
                           fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      user.email,
+                      loggedUser?.email ?? 'email',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.5),
                         fontSize: 14,
@@ -104,7 +132,7 @@ class PinPointDrawer extends StatelessWidget {
   }
 
   Widget PageButton(PageItem page) {
-    ButtonStyle buttonStyle = title == page.title
+    ButtonStyle buttonStyle = widget.title == page.title
         ? TextButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.blue)
         : TextButton.styleFrom(
@@ -115,7 +143,7 @@ class PinPointDrawer extends StatelessWidget {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 4, bottom: 4),
       child: TextButton(
         onPressed: () {
-          if (title == page.title) return;
+          if (widget.title == page.title) return;
 
           // if it's the my pins page, it's special
           if (page.title == 'View My Notes') {

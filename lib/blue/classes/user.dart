@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pinpoint/blue/services/data.dart';
 
 class User {
   String id;
@@ -7,6 +9,8 @@ class User {
   String avatar;
   bool isFriend;
   bool requestSent;
+
+  static CollectionReference userCollection = DataService.collection('users');
 
   User({
     // optional props
@@ -34,7 +38,17 @@ class User {
 
   Future<bool> create() async {
     // TODO: create an entry, update the id too
-    return true;
+    try {
+      await userCollection.add({
+        'avatar': avatar,
+        'email': email,
+        'name': name
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> update() async {
