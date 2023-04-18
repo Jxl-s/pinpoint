@@ -21,13 +21,23 @@ class _MyPinsScreenState extends State<MyPinsScreen>
 
   List<Location> pinnedLocations = [];
 
-  _MyPinsScreenState() {
-    // TODO: fetch the pinned locations in here
-    pinnedLocations = Location.example(4);
-
-    sortPins();
+  Future<void> fetchData() async {
+    User? user = getLoggedUser();
+    if (user != null) {
+      List<Location> locations = await Location.getPins(user);
+      
+      setState(() {
+        pinnedLocations = locations;
+      });
+    }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData().then((value) => sortPins());
+  }
+  
   Future<bool> addNote(Location location, String note) async {
     User? loggedUser = getLoggedUser();
     if (note.isEmpty) return false;

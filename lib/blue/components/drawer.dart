@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
+import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/friends_screen.dart';
+import 'package:pinpoint/blue/friends_screen_notes.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
@@ -31,7 +34,16 @@ class PinPointDrawer extends StatelessWidget {
       icon: Icons.pin_drop,
       page: MyPinsScreen(),
     ),
-    PageItem(title: 'Friends', icon: Icons.person, page: FriendsScreen())
+    PageItem(
+      title: 'Friends',
+      icon: Icons.person,
+      page: FriendsScreen(),
+    ),
+    PageItem(
+      title: 'View My Notes',
+      icon: Icons.note,
+      page: FriendsScreenNotes(getLoggedUser()!),
+    ),
   ];
 
   PinPointDrawer({String? title}) {
@@ -41,6 +53,8 @@ class PinPointDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     this.context = context;
+    User user = getLoggedUser() ?? User.example(1)[0];
+
     return Drawer(
       child: ListView(
         // Important: Remove any padding from the ListView.
@@ -64,14 +78,14 @@ class PinPointDrawer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '@Jia Xuan Li',
+                      "@${user.name}",
                       style: TextStyle(
                           color: Colors.white.withOpacity(0.75),
                           fontSize: 18,
                           fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      'jia@gmail.com',
+                      user.email,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.5),
                         fontSize: 14,
@@ -103,12 +117,24 @@ class PinPointDrawer extends StatelessWidget {
         onPressed: () {
           if (title == page.title) return;
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => page.page),
-          ).then((value) {
-            Navigator.pop(context);
-          });
+          // if it's the my pins page, it's special
+          if (page.title == 'View My Notes') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page.page),
+            ).then((value) {
+              Navigator.pop(context);
+            });
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => page.page),
+            ).then((value) {
+              Navigator.pop(context);
+            });
+          }
+
+          Scaffold.of(context).closeDrawer();
         },
         style: buttonStyle,
         child: Row(

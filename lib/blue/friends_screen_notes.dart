@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/map_screen.dart';
@@ -24,16 +25,29 @@ class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
   User friend;
   List<Note> notes = [];
 
-  _FriendsScreenNotesState(this.friend) {
-    this.notes = Note.example(10);
+  Future<void> fetchData() async {
+    List<Note> notes = await Note.getNotes(friend);
+
+    setState(() {
+      this.notes = notes;
+    });
   }
+
+  @override
+  void initState() {
+    print('fetching state for friends pag');
+    super.initState();
+    fetchData();
+  }
+
+  _FriendsScreenNotesState(this.friend);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "PinPoint - Friends",
+          "PinPoint - Notes",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -98,7 +112,6 @@ class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
                 ),
               ],
             ),
-
             SizedBox(
               height: 4,
             ),
@@ -111,7 +124,8 @@ class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MapScreen(note.location)),
+                    MaterialPageRoute(
+                        builder: (context) => MapScreen(note.location)),
                   );
                 },
                 child: Text(

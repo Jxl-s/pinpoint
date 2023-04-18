@@ -23,11 +23,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   List<Location> nearbyLocations = [];
   List<Location> pinnedLocations = [];
 
-  _MapScreenState([Location? location]) {
-    // Probably fetch the data here?
-    nearbyLocations = Location.example(4);
-    pinnedLocations = Location.example(2);
+  Future<void> fetchData() async {
+    User? user = getLoggedUser();
 
+    if (user != null) {
+      List<Location> nearby = await Location.getNearby();
+      List<Location> pins = await Location.getPins(user);
+
+      setState(() {
+        nearbyLocations = nearby;
+        pinnedLocations = pins;
+      });
+    }
+  }
+
+  _MapScreenState([Location? location]) {
     this.selectedLocation = location;
   }
 
@@ -43,6 +53,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (this.selectedLocation != null) {
       this._tabController.animateTo(1);
     }
+
+    fetchData();
   }
 
   @override
@@ -235,34 +247,34 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     bool isSelected = selectedLocation != null;
     Widget buttonRow = isSelected
         ? Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () {
-                  addPin(selectedLocation);
-                },
-                child: Text(
-                  'ADD PIN',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  shareLocation(selectedLocation);
-                },
-                child: Text(
-                  'SHARE',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          )
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () {
+            addPin(selectedLocation);
+          },
+          child: Text(
+            'ADD PIN',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            shareLocation(selectedLocation);
+          },
+          child: Text(
+            'SHARE',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    )
         : Row();
 
     return Column(
