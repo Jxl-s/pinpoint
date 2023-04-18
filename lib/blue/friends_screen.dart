@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/_logged_user.dart';
 import 'package:pinpoint/blue/classes/user.dart';
+import 'package:pinpoint/blue/components/confirm_dialog.dart';
+import 'package:pinpoint/blue/friends_screen_notes.dart';
 import './components/drawer.dart';
-
-import './friends_screen_list.dart';
-import './friends_screen_request.dart';
-import './friends_screen_search.dart';
 
 class FriendsScreen extends StatefulWidget {
   FriendsScreen() {}
@@ -16,35 +14,40 @@ class FriendsScreen extends StatefulWidget {
 
 class _FriendsScreenState extends State<FriendsScreen> {
   List<User> friends = [];
+  List<User> filteredFriends = [];
+  List<User> searchResults = [];
   List<User> requests = [];
 
-  bool loaded = false;
+  final TextEditingController _friendSearchController = new TextEditingController();
+
+  _FriendsScreenState() {
+    _friendSearchController.addListener(updateFilteredFriends);
+  }
 
   @override
   void initState() {
     super.initState();
+
+    // Get the data
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
     User? user = getLoggedUser();
-
     if (user != null) {
-      Future<List<User>> friends = user.getFriends();
-      Future<List<User>> requests = user.getIncomingRequests();
+      List<User> friends = await user.getFriends();
+      List<User> requests = await user.getIncomingRequests();
 
-      Future.wait<List<User>>([friends, requests]).then((value) {
-        setState(() {
-          this.friends = User.example(4);
-          this.requests = User.example(4);
-        });
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {});
-        });
+      setState(() {
+        this.friends = friends;
+        this.filteredFriends = [...friends];
+        this.requests = requests;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(this.friends);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -88,13 +91,448 @@ class _FriendsScreenState extends State<FriendsScreen> {
           padding: const EdgeInsets.all(20),
           child: TabBarView(
             children: [
-              FriendsScreenList(this.friends),
-              FriendsScreenRequest(this.requests, this.friends),
-              FriendsScreenSearch(),
-              // MapPage(),
-              // PinsPage(),
+              FriendsListScreen(),
+              FriendsRequestScreen(),
+              FriendsSearchScreen()
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // FRIENDS LIST SCREEN
+  void updateFilteredFriends() {
+    String filterText = _friendSearchController.text;
+    List<User> newFiltered = [];
+
+    for (int i = 0; i < friends.length; i++) {
+      if (friends[i].email.toLowerCase().contains(filterText)) {
+        newFiltered = [...newFiltered, friends[i]];
+        continue;
+      }
+
+      if (friends[i].name.toLowerCase().contains(filterText)) {
+        newFiltered = [...newFiltered, friends[i]];
+        continue;
+      }
+    }
+
+    setState(() {
+      filteredFriends = newFiltered;
+    });
+  }
+
+  Widget FriendsListScreen() {
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            'Friends',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            child: TextField(
+              controller: _friendSearchController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: Icon(Icons.search),
+                hintText: 'Search Friends',
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: ListView(
+              children: filteredFriends.map((e) => FriendCard(e)).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget FriendCard(User friend) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: NetworkImage(friend.avatar), fit: BoxFit.fill),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "@${friend.name}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(friend.email),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'MESSAGE',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FriendsScreenNotes(friend),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'VIEW NOTES',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    showConfirmationDialog(
+                      context: context,
+                      title: 'Unfriend user?',
+                      cancel: 'Cancel',
+                      submit: Text(
+                        'Yes, unfriend',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onPressed: () async {
+                        User? user = getLoggedUser();
+                        if (user == null) return;
+
+                        bool success = await user!.unfriend(friend);
+                        showNotification(
+                          context: context,
+                          text: success
+                              ? 'User unfriended!'
+                              : 'Error unfriending user',
+                        );
+
+                        if (success) {
+                          setState(() {
+                            friends.remove(friend);
+                            updateFilteredFriends();
+                          });
+                        }
+                      },
+                    );
+                  },
+                  child: Text(
+                    'UNFRIEND',
+                    style: TextStyle(
+                        color: Colors.redAccent, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // FRIEND REQUESTS
+
+  Widget FriendsRequestScreen() {
+    return Column(
+      children: [
+        Text(
+          'Requests',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Expanded(
+          child: ListView(
+            shrinkWrap: true,
+            children: requests.map((e) => FriendRequestCard(e)).toList(),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget FriendRequestCard(User friend) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        friend.avatar,
+                      ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "@${friend.name}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(friend.email),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    User? user = getLoggedUser();
+                    if (user == null) return;
+
+                    bool success = await user!.accept(friend);
+                    showNotification(
+                      context: context,
+                      text: success
+                          ? 'Request accepted!'
+                          : 'Error accepting request',
+                    );
+
+                    if (success) {
+                      setState(() {
+                        requests.remove(friend);
+                        friends.add(friend);
+                        updateFilteredFriends();
+                      });
+                    }
+                  },
+                  child: Text(
+                    'ACCEPT REQUEST',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // FRIENDS SEARCH
+  TextEditingController _searchFieldController = new TextEditingController();
+
+  void searchUsers(String user) {
+    // TODO: will be implemented in the future
+    setState(() {
+      searchResults = User.example(10);
+    });
+  }
+
+  Future<bool> cancelRequest(User user) async {
+    User? me = getLoggedUser();
+    if (me == null) return false;
+
+    bool success = await me.cancel(user);
+    showNotification(context: context, text: success ? 'Request cancelled!' : 'Error cancelling request');
+
+    if (success) {
+      setState(() {
+        user.requestSent = false;
+      });
+    }
+
+    return true;
+  }
+
+  Future<bool> sendRequest(User user) async {
+    User? me = getLoggedUser();
+    if (me == null) return false;
+
+    bool success = await me.addFriend(user);
+    showNotification(context: context, text: success ? 'Request sent!' : 'Error sending request');
+
+    if (success) {
+      setState(() {
+        user.requestSent = true;
+      });
+    }
+
+    return true;
+  }
+
+  Widget FriendsSearchScreen() {
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            'Search',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            child: TextField(
+              controller: _searchFieldController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: Icon(Icons.search),
+                hintText: 'Search Users',
+              ),
+              onSubmitted: ((value) {
+                searchUsers(value);
+              }),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: ListView(
+              children: searchResults.map((e) => SearchResultCard(e)).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget SearchResultCard(User friend) {
+    String buttonText = friend.requestSent ? 'CANCEL REQUEST' : 'SEND REQUEST';
+    Color buttonColor =
+    friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Container(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        friend.avatar,
+                      ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "@${friend.name}",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(friend.email),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                !friend.isFriend
+                    ? TextButton(
+                  onPressed: friend.requestSent
+                      ? () {
+                    cancelRequest(friend);
+                  }
+                      : () {
+                    sendRequest(friend);
+                  },
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: buttonColor,
+                    ),
+                  ),
+                )
+                    : SizedBox(
+                  height: 16.0,
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
