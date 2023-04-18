@@ -4,6 +4,8 @@ import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:pinpoint/blue/services/auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapScreen extends StatefulWidget {
   Location? location;
@@ -55,6 +57,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     fetchData();
+    fetchLocation();
   }
 
   @override
@@ -93,6 +96,49 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (user == null) return false;
 
     return location.removePin(user!);
+  }
+
+  // FOR GOOGLE MAPS
+  final LatLng _center = const LatLng(0, 0);
+
+  Future fetchLocation() async {
+    // check for permissions
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    mapController.moveCamera(
+      CameraUpdate.newLatLngZoom(
+          LatLng(position.latitude, position.longitude), 15),
+    );
+  }
+
+  late GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    print('the map loaded');
+    mapController = controller;
+    fetchLocation();
   }
 
   @override
@@ -247,41 +293,47 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     bool isSelected = selectedLocation != null;
     Widget buttonRow = isSelected
         ? Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton(
-          onPressed: () {
-            addPin(selectedLocation);
-          },
-          child: Text(
-            'ADD PIN',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            shareLocation(selectedLocation);
-          },
-          child: Text(
-            'SHARE',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    )
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  addPin(selectedLocation);
+                },
+                child: Text(
+                  'ADD PIN',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  shareLocation(selectedLocation);
+                },
+                child: Text(
+                  'SHARE',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          )
         : Row();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Placeholder(),
+          child: GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 11.0,
+            ),
+          ),
         ),
         SizedBox(
           height: 10,
