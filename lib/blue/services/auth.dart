@@ -13,6 +13,7 @@ class AuthService {
 
   static Future<void> signOut() async {
     loggedUser = null;
+    await googleSignIn.signOut();
     await FirebaseAuth.instance.signOut();
   }
 
@@ -21,13 +22,32 @@ class AuthService {
       // try finding it
       final User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // create the new user
+        // fetch the user from the database
+        final QuerySnapshot q = await usersCollection
+            .where('user_id', isEqualTo: user.uid)
+            .limit(1)
+            .get();
+
+        // not found, so create it
+        if (q.docs.length <= 0) {
+          await googleSignIn.signOut();
+          await FirebaseAuth.instance.signOut();
+
+          return null;
+        }
+
         UserClass.User newUser = UserClass.User(
-          id: user.uid,
-          name: user.displayName!,
+          id: q.docs[0].get("user_id"),
+          name: q.docs[0].get('name'),
           email: user.email!,
-          avatar: user.photoURL!,
+          avatar: q.docs[0].get('avatar'),
         );
+
+        // if the user has a new avatar, update the avatar
+        if (user.photoURL != q.docs[0].get('avatar')) {
+          newUser.avatar = user.photoURL!;
+          await newUser.update();
+        }
 
         loggedUser = newUser;
       }
@@ -50,13 +70,14 @@ class AuthService {
 
     // Find the user in the database now
     final QuerySnapshot q = await usersCollection
-        .where('email', isEqualTo: user.email!.toLowerCase())
+        .where('user_id', isEqualTo: user.uid)
         .limit(1)
         .get();
 
     // if it does not exist, create it
     if (q.docs.length <= 0) {
       UserClass.User newUser = UserClass.User(
+        id: user.uid,
         name: user.displayName!,
         email: user.email!,
         avatar: user.photoURL!,
@@ -68,7 +89,7 @@ class AuthService {
 
     // Create the user
     return UserClass.User(
-      id: q.docs[0].id,
+      id: q.docs[0].get('user_id'),
       name: q.docs[0].get('name'),
       email: q.docs[0].get('email'),
       avatar: q.docs[0].get('avatar'),

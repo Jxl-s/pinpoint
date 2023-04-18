@@ -40,9 +40,10 @@ class User {
     // TODO: create an entry, update the id too
     try {
       await userCollection.add({
+        'user_id': id,
+        'name': name,
         'avatar': avatar,
         'email': email,
-        'name': name
       });
 
       return true;
@@ -53,7 +54,23 @@ class User {
 
   Future<bool> update() async {
     // TODO: using the id, update the fields
-    return true;
+    try {
+      QuerySnapshot q =
+          await userCollection.where('user_id', isEqualTo: id).limit(1).get();
+
+      if (q.docs.length <= 0) return false;
+
+      await userCollection.doc(q.docs[0].id).update({
+        'user_id': id,
+        'avatar': avatar,
+        'email': email,
+        'name': name,
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> delete() async {
