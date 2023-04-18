@@ -36,6 +36,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       setState(() {
         nearbyLocations = nearby;
         pinnedLocations = pins;
+
+        // for each pinned, make the marker
+        pins.forEach((element) {
+          mapMarkers.add(
+            Marker(
+              markerId: MarkerId(element.id),
+              position: LatLng(element.location[0], element.location[1]),
+              icon: BitmapDescriptor.defaultMarker,
+              infoWindow: InfoWindow(
+                title: element.name,
+                snippet: element.name,
+              ),
+            ),
+          );
+        });
+
         loaded = true;
       });
     }
@@ -102,6 +118,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   // FOR GOOGLE MAPS
   final LatLng _center = const LatLng(0, 0);
+  Set<Marker> mapMarkers = {};
 
   late GoogleMapController mapController;
 
@@ -214,7 +231,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: location.isAdded ? Colors.blue : Colors.black.withOpacity(0.1),
+                        color: location.isAdded
+                            ? Colors.blue
+                            : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -293,7 +312,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         setState(() {
                           selectedLocation!.isAdded = false;
 
-                          int i = -1;
                           pinnedLocations.forEach((element) {
                             if (element.id == selectedLocation!.id) {
                               element.isAdded = false;
@@ -315,6 +333,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         setState(() {
                           selectedLocation!.isAdded = true;
                           pinnedLocations.add(selectedLocation!);
+
+                          // mapMarkers.add(Marker(
+                          //   markerId: MarkerId(selectedLocation!.id),
+                          //   position: LatLng(selectedLocation!.location[0], selectedLocation!.location[1]),
+                          //   icon: BitmapDescriptor.defaultMarker,
+                          //   infoWindow: InfoWindow(
+                          //     title: selectedLocation!.name,
+                          //     snippet: selectedLocation!.name,
+                          //   ),
+                          // ));
 
                           nearbyLocations.forEach((element) {
                             if (element.id == selectedLocation!.id) {
@@ -364,6 +392,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               target: _center,
               zoom: 11.0,
             ),
+            markers: mapMarkers,
           ),
         ),
         SizedBox(
@@ -424,13 +453,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: location.isAdded ? Colors.blue : Colors.black.withOpacity(0.1),
+                        color: location.isAdded
+                            ? Colors.blue
+                            : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
                     SizedBox(width: 8),
                     Text(
-                      location.type,
+                      formatPlaceType(location.type),
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.5),
                         fontSize: 16,
