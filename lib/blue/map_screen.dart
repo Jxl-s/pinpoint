@@ -22,6 +22,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   Location? selectedLocation;
 
+  bool loaded = false;
   List<Location> nearbyLocations = [];
   List<Location> pinnedLocations = [];
 
@@ -35,6 +36,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       setState(() {
         nearbyLocations = nearby;
         pinnedLocations = pins;
+        loaded = true;
       });
     }
   }
@@ -103,16 +105,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   late GoogleMapController mapController;
 
-  Future fetchLocation() async {
-    // Position position = await Location.getLocation();
-    //
-    // if (mapController != null) {
-    //   mapController.moveCamera(
-    //     CameraUpdate.newLatLngZoom(
-    //         LatLng(position.latitude, position.longitude), 15),
-    //   );
-    // }
-  }
+  Future fetchLocation() async {}
 
   void _onMapCreated(GoogleMapController controller) {
     print('the map loaded');
@@ -146,7 +139,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         ),
         appBar: AppBar(
           title: Text(
-            "PinPoint - Map",
+            loaded ? "PinPoint - Map" : 'Please wait ...',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
@@ -221,7 +214,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: location.isAdded ? Colors.blue : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -292,13 +285,56 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             children: [
               TextButton(
                 onPressed: () {
-                  addPin(selectedLocation);
+                  if (selectedLocation!.isAdded) {
+                    removePin(selectedLocation).then((success) {
+                      if (success) {
+                        showNotification(
+                            context: context, text: 'Removed pin!');
+                        setState(() {
+                          selectedLocation!.isAdded = false;
+
+                          int i = -1;
+                          pinnedLocations.forEach((element) {
+                            if (element.id == selectedLocation!.id) {
+                              element.isAdded = false;
+                            }
+                          });
+
+                          nearbyLocations.forEach((element) {
+                            if (element.id == selectedLocation!.id) {
+                              element.isAdded = false;
+                            }
+                          });
+                        });
+                      }
+                    });
+                  } else {
+                    addPin(selectedLocation).then((success) {
+                      if (success) {
+                        showNotification(context: context, text: 'Added pin!');
+                        setState(() {
+                          selectedLocation!.isAdded = true;
+                          pinnedLocations.add(selectedLocation!);
+
+                          nearbyLocations.forEach((element) {
+                            if (element.id == selectedLocation!.id) {
+                              element.isAdded = true;
+                            }
+                          });
+                        });
+                      } else {
+                        showNotification(
+                            context: context, text: 'Error adding pin');
+                      }
+                    });
+                  }
                 },
                 child: Text(
-                  'ADD PIN',
+                  selectedLocation!.isAdded ? 'REMOVE PIN' : 'ADD PIN',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: selectedLocation!.isAdded ? Colors.red : Colors.blue,
                   ),
                 ),
               ),
@@ -388,7 +424,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: location.isAdded ? Colors.blue : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -459,7 +495,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           if (success) {
                             // remove the entry from the list
                             setState(() {
+                              location.isAdded = false;
                               pinnedLocations.remove(location);
+                              // frmo the nearby, if it exists, mark it as not added
+
+                              nearbyLocations.forEach((element) {
+                                if (element.id == location.id) {
+                                  element.isAdded = false;
+                                }
+                              });
+
+                              if (selectedLocation?.id == location.id) {
+                                selectedLocation!.isAdded = false;
+                              }
                             });
                           }
                         });

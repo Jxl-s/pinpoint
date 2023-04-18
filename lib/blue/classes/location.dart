@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pinpoint/blue/services/auth.dart';
+import 'package:pinpoint/blue/services/data.dart';
 
 String formatPlaceType(String placeType) {
   String formatted = placeType.replaceAll("_", " ");
-  return formatted;
+  String capitalizedStr = formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+  return capitalizedStr;
 }
 
 double distanceCalc(double lat1, double lon1, double lat2, double lon2) {
@@ -35,14 +40,18 @@ class Location {
   int distance; // in meters
   String name;
   String address;
+  bool isAdded = false;
 
   static final GOOGLE_MAPS_API_KEY =
       "AIzaSyCZ4POmTNuwNXDnnAypsMmg_WGpSNMNxos"; // not mine
+
+  static CollectionReference pinsReference = DataService.collection('pins');
 
   Location({
     // optional props
     String? id,
     List<double>? location,
+    bool? isAdded,
 
     // required props
     required this.type,
@@ -50,7 +59,8 @@ class Location {
     required this.name,
     required this.address,
   })  : id = id ?? '',
-        location = location ?? [0.0, 0.0];
+        location = location ?? [0.0, 0.0],
+        isAdded = isAdded ?? false;
 
   static Future<Position> getLocation() async {
     // check for permissions
@@ -82,6 +92,11 @@ class Location {
   }
 
   static Future<List<Location>> getNearby() async {
+    User? user = await AuthService.getLoggedUser();
+    if (user == null) {
+      return [];
+    }
+
     // TODO: actually implmenent it
     // get the current geolocation first
     Position position = await getLocation();
@@ -91,7 +106,7 @@ class Location {
 
     http.Response res = await http.get(
       Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${45.5019268},${-73.6731421}&key=${GOOGLE_MAPS_API_KEY}&radius=5000"),
+          "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${45.5019268},${-73.6731421}&key=${GOOGLE_MAPS_API_KEY}&rankby=prominence&radius=5000"),
     );
 
     var jsonLocations = jsonDecode(res.body);
@@ -105,8 +120,12 @@ class Location {
       double lat = res['geometry']['location']['lat'];
       double lng = res['geometry']['location']['lng'];
 
-      double dist =
-          distanceCalc(lat, lng, fakeLat, fakeLng);
+      double dist = distanceCalc(lat, lng, fakeLat, fakeLng);
+
+      QuerySnapshot existQuery = await pinsReference
+          .where('author_id', isEqualTo: user.id)
+          .where('location_id', isEqualTo: res['place_id'])
+          .get();
 
       locations.add(
         Location(
@@ -115,6 +134,7 @@ class Location {
           distance: dist.floor(),
           name: res['name'],
           address: res['vicinity'],
+          isAdded: existQuery.docs.isNotEmpty,
           location: [
             lat,
             lng,
@@ -128,19 +148,89 @@ class Location {
     return locations;
   }
 
+  static Future<Location> getLocationFromId(String id) async {
+    http.Response res = await http.get(
+      Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${GOOGLE_MAPS_API_KEY}"),
+    );
+
+    double fakeLat = 45.5019268;
+    double fakeLng = -73.6731421;
+
+    var jsonRes = jsonDecode(res.body);
+
+    double lat = jsonRes['result']['geometry']['location']['lat'];
+    double lng = jsonRes['result']['geometry']['location']['lng'];
+
+    return Location(
+      name: jsonRes['result']['name'],
+      address: jsonRes['result']['formatted_address'],
+      type: jsonRes['result']['types'][0],
+      location: [lat, lng],
+      distance: distanceCalc(lat, lng, fakeLat, fakeLng).floor(),
+      id: id,
+      isAdded: true,
+    );
+  }
+
   static Future<List<Location>> getPins(User user) async {
     // TODO: using the user.id make it work for real
-    return Location.example(5);
+    QuerySnapshot locationsQuery =
+        await pinsReference.where('author_id', isEqualTo: user.id).get();
+
+    // for each of them, give the appropraite data
+    var locationsResults = locationsQuery.docs;
+    List<Location> results = [];
+
+    for (int i = 0; i < locationsResults.length; i++) {
+      var loc = locationsResults[i];
+      Location locObj = await getLocationFromId(loc.get('location_id'));
+
+      // get the location from google maps API
+      results.add(locObj);
+    }
+
+    // return Location.example(5);
+    return results;
   }
 
   Future<bool> createPin(User user) async {
     // TODO: create an entry, update the id too
-    return true;
+    // check if already exists
+    QuerySnapshot existQuery = await pinsReference
+        .where('author_id', isEqualTo: user.id)
+        .where('location_id', isEqualTo: id)
+        .get();
+
+    if (existQuery.docs.isNotEmpty) return false;
+
+    try {
+      await pinsReference.add({'author_id': user.id, 'location_id': this.id});
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> removePin(User user) async {
     // TODO: create an entry, update the id too
-    return true;
+    QuerySnapshot existQuery = await pinsReference
+        .where('author_id', isEqualTo: user.id)
+        .where('location_id', isEqualTo: id)
+        .get();
+
+    if (existQuery.docs.isNotEmpty) {
+      try {
+        await pinsReference.doc(existQuery.docs[0].id).delete();
+
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    return false;
   }
 
   String getDistanceString() {
