@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "833929711528",
+    "project_id": "pinpoint-7b1f0",
+    "storage_bucket": "pinpoint-7b1f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833929711528:android:255b06a17389c56d00179d",
+        "android_client_info": {
+          "package_name": "com.example.pinpoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "833929711528-jefbnkm6b0k5601c9jdha7cqle4mi3if.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUVjeSWgdMNhdHwXYfX0duZw4Vkk_3u8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "833929711528-jefbnkm6b0k5601c9jdha7cqle4mi3if.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "833929711528-2htmvv4ii7drdajd5e8kcqr1uocardg6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pinpoint"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
