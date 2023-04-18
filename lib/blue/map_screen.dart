@@ -57,7 +57,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     fetchData();
-    fetchLocation();
+    // fetchLocation();
   }
 
   @override
@@ -104,20 +104,36 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   late GoogleMapController mapController;
 
   Future fetchLocation() async {
-    Position position = await Location.getLocation();
-
-    if (mapController != null) {
-      mapController.moveCamera(
-        CameraUpdate.newLatLngZoom(
-            LatLng(position.latitude, position.longitude), 15),
-      );
-    }
+    // Position position = await Location.getLocation();
+    //
+    // if (mapController != null) {
+    //   mapController.moveCamera(
+    //     CameraUpdate.newLatLngZoom(
+    //         LatLng(position.latitude, position.longitude), 15),
+    //   );
+    // }
   }
 
   void _onMapCreated(GoogleMapController controller) {
     print('the map loaded');
     mapController = controller;
-    fetchLocation();
+
+    if (selectedLocation != null) {
+      // go to the location's coordinates
+      print(selectedLocation!.location[0]);
+      print(selectedLocation!.location[1]);
+
+      mapController.moveCamera(
+        CameraUpdate.newLatLngZoom(
+            LatLng(
+              selectedLocation!.location[0],
+              selectedLocation!.location[1],
+            ),
+            14),
+      );
+    } else {
+      // fetchLocation();
+    }
   }
 
   @override
