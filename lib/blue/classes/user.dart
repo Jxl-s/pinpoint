@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class User {
-  int id;
+  String id;
   String name;
   String email;
   String avatar;
@@ -10,7 +10,7 @@ class User {
 
   User({
     // optional props
-    int? id,
+    String? id,
     bool? isFriend,
     bool? requestSent,
 
@@ -18,7 +18,7 @@ class User {
     required this.name,
     required this.email,
     required this.avatar,
-  })  : id = id ?? 0,
+  })  : id = id ?? '',
         isFriend = isFriend ?? false,
         requestSent = requestSent ?? false;
 
@@ -70,7 +70,7 @@ class User {
   static List<User> example(int amount) {
     List<User> users = [
       User(
-        id: 1,
+        id: '1',
         name: 'John Smith',
         email: 'john.smith@example.com',
         avatar: 'https://i.pravatar.cc/150?img=1',
@@ -78,7 +78,7 @@ class User {
         requestSent: true,
       ),
       User(
-        id: 2,
+        id: '2',
         name: 'Emily Jones',
         email: 'emily.jones@example.com',
         avatar: 'https://i.pravatar.cc/150?img=2',
@@ -86,7 +86,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 3,
+        id: '3',
         name: 'William Davis',
         email: 'william.davis@example.com',
         avatar: 'https://i.pravatar.cc/150?img=3',
@@ -94,7 +94,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 4,
+        id: '4',
         name: 'Sarah Brown',
         email: 'sarah.brown@example.com',
         avatar: 'https://i.pravatar.cc/150?img=4',
@@ -102,7 +102,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 5,
+        id: '5',
         name: 'Jacob Johnson',
         email: 'jacob.johnson@example.com',
         avatar: 'https://i.pravatar.cc/150?img=5',
@@ -110,7 +110,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 6,
+        id: '6',
         name: 'Olivia Williams',
         email: 'olivia.williams@example.com',
         avatar: 'https://i.pravatar.cc/150?img=6',
@@ -118,7 +118,7 @@ class User {
         requestSent: true,
       ),
       User(
-        id: 7,
+        id: '7',
         name: 'Ethan Wilson',
         email: 'ethan.wilson@example.com',
         avatar: 'https://i.pravatar.cc/150?img=7',
@@ -126,7 +126,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 8,
+        id: '8',
         name: 'Sophia Garcia',
         email: 'sophia.garcia@example.com',
         avatar: 'https://i.pravatar.cc/150?img=8',
@@ -134,7 +134,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 9,
+        id: '9',
         name: 'Michael Martinez',
         email: 'michael.martinez@example.com',
         avatar: 'https://i.pravatar.cc/150?img=9',
@@ -142,7 +142,7 @@ class User {
         requestSent: true,
       ),
       User(
-        id: 10,
+        id: '10',
         name: 'Isabella Anderson',
         email: 'isabella.anderson@example.com',
         avatar: 'https://i.pravatar.cc/150?img=10',
@@ -150,7 +150,7 @@ class User {
         requestSent: true,
       ),
       User(
-        id: 11,
+        id: '11',
         name: 'Daniel Thomas',
         email: 'daniel.thomas@example.com',
         avatar: 'https://i.pravatar.cc/150?img=11',
@@ -158,7 +158,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 12,
+        id: '12',
         name: 'Mia Jackson',
         email: 'mia.jackson@example.com',
         avatar: 'https://i.pravatar.cc/150?img=12',
@@ -166,7 +166,7 @@ class User {
         requestSent: false,
       ),
       User(
-        id: 13,
+        id: '13',
         name: 'David White',
         email: 'david.white@example.com',
         avatar: 'https://i.pravatar.cc/150?img=13',
@@ -174,7 +174,7 @@ class User {
         requestSent: true,
       ),
       User(
-        id: 14,
+        id: '14',
         name: 'Charlotte Harris',
         email: 'charlotte.harris@example.com',
         avatar: 'https://i.pravatar.cc/150?img=14',

@@ -4,7 +4,7 @@ import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 
 class Note {
-  int id;
+  String id;
   User author;
   String note;
   Location location;
@@ -12,7 +12,7 @@ class Note {
 
   Note({
     // optional props
-    int? id,
+    String? id,
     DateTime? date,
 
     // required props
@@ -20,7 +20,7 @@ class Note {
     required this.note,
     required this.location,
   })  : date = date ?? DateTime.now(),
-        id = id ?? 0;
+        id = id ?? '';
 
   static Future<List<Note>> getNotes(User user) async {
     // TODO: using the user id, fetch their notes
@@ -56,140 +56,140 @@ class Note {
   static List<Note> example(int amount) {
     List<Note> notes = [
       Note(
-        id: 1,
+        id: '1',
         author: User.example(1)[0],
         note: 'Lorem ipsum dolor sit amet',
         date: DateTime(2022, 5, 12),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 2,
+        id: '2',
         author: User.example(1)[0],
         note: 'Consectetur adipiscing elit',
         date: DateTime(2023, 1, 2),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 3,
+        id: '3',
         author: User.example(1)[0],
         note: 'Sed do eiusmod tempor incididunt',
         date: DateTime(2021, 1, 20),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 4,
+        id: '4',
         author: User.example(1)[0],
         note: 'Ut enim ad minim veniam',
         date: DateTime(2023, 1, 30),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 5,
+        id: '5',
         author: User.example(1)[0],
         note: 'Quis nostrud exercitation ullamco',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 6,
+        id: '6',
         author: User.example(1)[0],
         note: 'Laboris nisi ut aliquip ex ea commodo consequat',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 7,
+        id: '7',
         author: User.example(1)[0],
         note: 'Duis aute irure dolor in reprehenderit',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 8,
+        id: '8',
         author: User.example(1)[0],
         note: 'Excepteur sint occaecat cupidatat non proident',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 9,
+        id: '9',
         author: User.example(1)[0],
         note: 'Sunt in culpa qui officia deserunt mollit anim',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 10,
+        id: '10',
         author: User.example(1)[0],
         note: 'Id est laborum et dolorum fuga',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 11,
+        id: '11',
         author: User.example(1)[0],
         note: 'Et harum quidem rerum facilis est et expedita distinctio',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 12,
+        id: '12',
         author: User.example(1)[0],
         note: 'Nam libero tempore, cum soluta nobis est eligendi',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 13,
+        id: '13',
         author: User.example(1)[0],
         note: 'Optio cumque nihil impedit quo minus',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 14,
+        id: '14',
         author: User.example(1)[0],
         note: 'Temporibus autem quibusdam et aut officiis debitis',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 15,
+        id: '15',
         author: User.example(1)[0],
         note: 'On the other hand, we denounce with righteous',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 16,
+        id: '16',
         author: User.example(1)[0],
         note: 'But I must explain to you how all this mistaken idea',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 17,
+        id: '17',
         author: User.example(1)[0],
         note: 'At vero eos et accusamus et iusto odio dignissimos',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 18,
+        id: '18',
         author: User.example(1)[0],
         note: 'Similique sunt in culpa qui officia deserunt mollitia',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 19,
+        id: '19',
         author: User.example(1)[0],
         note: 'Itaque earum rerum hic tenetur a sapiente delectus',
         date: DateTime.now(),
         location: Location.example(1)[0],
       ),
       Note(
-        id: 20,
+        id: '20',
         author: User.example(1)[0],
         note: 'Neque porro quisquam est, qui dolorem ipsum quia',
         date: DateTime.now(),
