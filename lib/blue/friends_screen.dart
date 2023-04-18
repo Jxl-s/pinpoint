@@ -381,10 +381,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
   // FRIENDS SEARCH
   TextEditingController _searchFieldController = new TextEditingController();
 
-  void searchUsers(String user) {
+  Future<void> searchUsers(String user) async {
     // TODO: will be implemented in the future
+    var found = await User.searchUsers(user);
     setState(() {
-      searchResults = User.example(10);
+      searchResults = found;
     });
   }
 

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/services/data.dart';
 
 class User {
@@ -11,6 +12,10 @@ class User {
   bool requestSent;
 
   static CollectionReference userCollection = DataService.collection('users');
+  static CollectionReference friendCollection =
+  DataService.collection('friends');
+  static CollectionReference friendRequestsCollection =
+  DataService.collection('friend_requests');
 
   User({
     // optional props
@@ -22,9 +27,63 @@ class User {
     required this.name,
     required this.email,
     required this.avatar,
-  })  : id = id ?? '',
+  })
+      : id = id ?? '',
         isFriend = isFriend ?? false,
         requestSent = requestSent ?? false;
+
+  static Future<List<User>> searchUsers(String query) async {
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) {
+      return [];
+    }
+
+    // TODO: using this user id, fetch the friends
+    var searchQueries = await Future.wait([
+      userCollection.where('name', isEqualTo: query).get(),
+      userCollection.where('email', isEqualTo: query).get()
+    ]);
+
+    QuerySnapshot results1 = searchQueries[0];
+    QuerySnapshot results2 = searchQueries[1];
+
+    // merge the two arrays of docs
+    var results = [...results1.docs, ...results2.docs];
+
+    List<User> friends = [];
+    for (int i = 0; i < results.length; i++) {
+      var r = results[i];
+
+      // check if it's a friend
+      QuerySnapshot isFriendQuery = await friendCollection
+          .where('friend_id_1', isEqualTo: loggedUser!.id)
+          .where('friend_id_1', isEqualTo: r.get('user_id'))
+          .where('friend_id_2', isEqualTo: loggedUser!.id)
+          .where('friend_id_2', isEqualTo: r.get('user_id'))
+          .get();
+
+      // then check if it has a pending request
+      QuerySnapshot hasRequestQuery = await friendRequestsCollection
+          .where('request_asker', isEqualTo: loggedUser!.id)
+          .get();
+
+      bool isFriend = isFriendQuery.docs.isEmpty;
+      bool hasRequest = hasRequestQuery.docs.isEmpty;
+
+      friends.add(
+        User(
+          id: r.get('user_id'),
+          name: r.get('name'),
+          email: r.get('email'),
+          avatar: r.get('avatar'),
+          isFriend: isFriend,
+          requestSent: hasRequest,
+        ),
+      );
+    }
+
+    return friends;
+  }
 
   Future<List<User>> getFriends() async {
     // TODO: using this user id, fetch the friends
@@ -50,9 +109,8 @@ class User {
   }
 
   Future<List<User>> getIncomingRequests() async {
-    QuerySnapshot results = await userCollection
-        .where('request_receiver', isEqualTo: id)
-        .get();
+    QuerySnapshot results =
+    await userCollection.where('request_receiver', isEqualTo: id).get();
 
     List<User> friends = [];
     for (int i = 0; i < results.docs.length; i++) {
@@ -90,7 +148,7 @@ class User {
     // TODO: using the id, update the fields
     try {
       QuerySnapshot q =
-          await userCollection.where('user_id', isEqualTo: id).limit(1).get();
+      await userCollection.where('user_id', isEqualTo: id).limit(1).get();
 
       if (q.docs.length <= 0) return false;
 
