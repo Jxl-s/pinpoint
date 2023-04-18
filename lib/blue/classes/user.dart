@@ -28,12 +28,46 @@ class User {
 
   Future<List<User>> getFriends() async {
     // TODO: using this user id, fetch the friends
-    return User.example(5);
+    QuerySnapshot results = await userCollection
+        .where('friend_1', isEqualTo: id)
+        .where('friend_2', isEqualTo: id)
+        .get();
+
+    List<User> friends = [];
+    for (int i = 0; i < results.docs.length; i++) {
+      var r = results.docs[i];
+      friends.add(
+        User(
+          id: r.get('user_id'),
+          name: r.get('name'),
+          email: r.get('email'),
+          avatar: r.get('avatar'),
+        ),
+      );
+    }
+
+    return friends;
   }
 
   Future<List<User>> getIncomingRequests() async {
-    // TODO: get the requests
-    return User.example(5);
+    QuerySnapshot results = await userCollection
+        .where('request_receiver', isEqualTo: id)
+        .get();
+
+    List<User> friends = [];
+    for (int i = 0; i < results.docs.length; i++) {
+      var r = results.docs[i];
+      friends.add(
+        User(
+          id: r.get('user_id'),
+          name: r.get('name'),
+          email: r.get('email'),
+          avatar: r.get('avatar'),
+        ),
+      );
+    }
+
+    return friends;
   }
 
   Future<bool> create() async {
