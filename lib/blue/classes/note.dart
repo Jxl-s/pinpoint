@@ -26,7 +26,35 @@ class Note {
 
   static Future<List<Note>> getNotes(User user) async {
     // TODO: using the user id, fetch their notes
-    return Note.example(5);
+    QuerySnapshot noteQuery = await DataService.collection('notes')
+        .where('author_id', isEqualTo: user.id)
+        .get();
+
+    List<Note> results = [];
+    List<Future<Location>> locationQueries = [];
+
+    for (int i = 0; i < noteQuery.docs.length; i++) {
+      var note = noteQuery.docs[i];
+      locationQueries.add(
+        Location.getLocationFromId(note.get('location_id')),
+      );
+    }
+
+    var locationQueriesRun = await Future.wait(locationQueries);
+    for (int i = 0; i < noteQuery.docs.length; i++) {
+      var note = noteQuery.docs[i];
+      var locationResult = locationQueriesRun[i];
+
+      results.add(
+        Note(
+            id: note.id,
+            author: user,
+            note: note.get('note'),
+            location: locationResult),
+      );
+    }
+
+    return results;
   }
 
   static Future<List<Note>> getLocationNotes(
@@ -47,7 +75,6 @@ class Note {
     // var allQueries =
     //     await Future.wait([friendQuery1, friendQuery2, locationPinsQuery]);
 
-    // TODO: optimize the speed
     List<Note> userNotes = [];
     List<Future<QuerySnapshot>> noteQueries = [];
 
