@@ -49,6 +49,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         children: [
           Text("Settings"),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: (){},
+              child: Text("Clear All Pinpoints"),
+            )
+          ),
 
         ],
       ),
