@@ -20,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          loaded ? "PinPoint - Friends" : "Please wait ...",
+          loaded ? "PinPoint - Settings" : "Please wait ...",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -45,6 +45,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget settingsMenu() {
-    return Container();
+    return Center(
+      child: Column(
+        children: [
+          Text("Settings"),
+
+        ],
+      ),
+    );
   }
 }
