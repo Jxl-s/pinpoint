@@ -19,6 +19,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   List<User> requests = [];
 
   bool loaded = false;
+  bool isSearching = false;
 
   final TextEditingController _friendSearchController =
       new TextEditingController();
@@ -387,12 +388,17 @@ class _FriendsScreenState extends State<FriendsScreen> {
   TextEditingController _searchFieldController = new TextEditingController();
 
   Future<void> searchUsers(String user) async {
+    setState(() {
+      isSearching = true;
+    });
+
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) return;
 
     // TODO: will be implemented in the future
     var found = await User.searchUsers(user);
     setState(() {
+      isSearching = false;
       searchResults = found;
     });
   }
@@ -438,7 +444,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
       child: Column(
         children: [
           Text(
-            'Search',
+            isSearching ? 'Searching ...' : 'Search',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
