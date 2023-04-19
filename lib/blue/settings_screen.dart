@@ -4,6 +4,7 @@ import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/services/auth.dart';
+import 'package:pinpoint/main.dart';
 import './components/drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool loaded = false;
   User? user;
   TextEditingController usernameController = TextEditingController();
+  TextEditingController deleteEmailController = TextEditingController();
 
   Future<void> fetchData() async {
     User? user = await AuthService.getLoggedUser();
@@ -222,7 +224,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Enter email to confirm deletion'),
+                      content: TextField(
+                        controller: deleteEmailController,
+                        decoration: InputDecoration(hintText: "Email"),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            'Delete Account',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, color: Colors.red),
+                          ),
+                          onPressed: () async {
+                            print(deleteEmailController.text);
+                            if (user == null) {
+                              return showNotification(
+                                  context: context, text: 'Not logged in?');
+                            }
+
+                            if (deleteEmailController.text != user!.email) {
+                              return showNotification(
+                                  context: context,
+                                  text: 'Emails do not match');
+                            }
+
+                            print("ABOUE TO DELETE");
+                            bool success = await user!.delete();
+                            if (!success) {
+                              return showNotification(
+                                  context: context,
+                                  text: 'Error deleting account');
+                            }
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => Main()),
+                            ).then((value) {
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
               child: Text(
                 "Delete Account",
                 style: TextStyle(
