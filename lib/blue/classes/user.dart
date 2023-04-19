@@ -335,7 +335,6 @@ class User {
   }
 
   Future<bool> cancel(User other) async {
-    // TODO: remove the request
     // find the request, then delete it
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) {

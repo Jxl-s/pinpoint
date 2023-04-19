@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
+import 'package:pinpoint/blue/search_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
 
@@ -23,7 +24,8 @@ class _MainState extends State<Main> {
   _MainState() {
     //For testing purposes
     // screen = SettingsScreen();
-    screen = LandingScreen(onSignin: fetchUser);
+    // screen = LandingScreen(onSignin: fetchUser);
+    screen = SearchScreen();
   }
 
   Future<void> fetchUser() async {

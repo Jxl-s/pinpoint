@@ -5,6 +5,7 @@ import 'package:pinpoint/blue/friends_screen_notes.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
+import 'package:pinpoint/blue/search_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
 import 'package:pinpoint/main.dart';
@@ -55,6 +56,11 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
         title: 'Map View',
         icon: Icons.map,
         page: MapScreen(),
+      ),
+      PageItem(
+        title: 'Location Search',
+        icon: Icons.search,
+        page: SearchScreen(),
       ),
       PageItem(
         title: 'My Pins',

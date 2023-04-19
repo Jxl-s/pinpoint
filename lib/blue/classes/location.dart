@@ -30,7 +30,7 @@ double distanceCalc(double lat1, double lon1, double lat2, double lon2) {
   var c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
   var d = R * c;
 
-  return d;
+  return d * 1000;
 }
 
 class Location {
@@ -269,6 +269,65 @@ class Location {
     }
 
     return false;
+  }
+
+  static Future<List<Location>> searchLocations(String query) async {
+    // Get the user
+    User? user = await AuthService.getLoggedUser();
+    if (user == null) return [];
+
+    // get the locations that the user has pinned
+
+    var allRuns = await Future.wait([http.get(
+      Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/textsearch/json?key=${GOOGLE_MAPS_API_KEY}&query=${query}"),
+    ), pinsReference.where('author_id', isEqualTo: user!.id).get() ]);
+    
+    http.Response searchRequest = allRuns[0] as http.Response;
+    QuerySnapshot myPins = allRuns[1] as QuerySnapshot;
+    
+    var pinsHaveId = (String id) {
+      for (int i = 0; i < myPins.docs.length; i++) {
+        if (myPins.docs[i].get('location_id') == id) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+    
+    var jsonResults = jsonDecode(searchRequest.body)['results'];
+    List<Location> locations = [];
+
+    double positionLat = 45.5019268;
+    double positionLng = -73.6731421;
+
+    for (int i = 0; i < jsonResults.length; i++) {
+      var res = jsonResults[i];
+      var isAdded = pinsHaveId(res['place_id']);
+
+      double lat = res['geometry']['location']['lat'];
+      double lng = res['geometry']['location']['lng'];
+
+      double dist = distanceCalc(lat, lng, positionLat, positionLng);
+
+      locations.add(
+        Location(
+          id: res['place_id'],
+          type: formatPlaceType(res['types'][0]),
+          distance: dist.floor(),
+          name: res['name'],
+          address: res['formatted_address'],
+          isAdded: isAdded,
+          location: [
+            lat,
+            lng,
+          ],
+        ),
+      );
+    }
+    
+    return locations;
   }
 
   String getDistanceString() {
