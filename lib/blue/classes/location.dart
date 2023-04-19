@@ -47,6 +47,8 @@ class Location {
       "AIzaSyCZ4POmTNuwNXDnnAypsMmg_WGpSNMNxos"; // not mine
 
   static CollectionReference pinsReference = DataService.collection('pins');
+  static Map<String, Location> locationMemo = {};
+  static Position? positionMemo = null;
 
   Location({
     // optional props
@@ -64,6 +66,10 @@ class Location {
         isAdded = isAdded ?? false;
 
   static Future<Position> getLocation() async {
+    if (positionMemo != null) {
+      return positionMemo!;
+    }
+
     // check for permissions
     bool serviceEnabled;
     LocationPermission permission;
@@ -89,6 +95,7 @@ class Location {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
+    positionMemo = position;
     return position;
   }
 
@@ -164,6 +171,10 @@ class Location {
   }
 
   static Future<Location> getLocationFromId(String id) async {
+    if (locationMemo.containsKey(id)) {
+      return locationMemo[id]!;
+    }
+
     var queryRuns = await Future.wait([
       http.get(
         Uri.parse(
@@ -184,7 +195,7 @@ class Location {
     double lat = jsonRes['result']['geometry']['location']['lat'];
     double lng = jsonRes['result']['geometry']['location']['lng'];
 
-    return Location(
+    locationMemo[id] = Location(
       name: jsonRes['result']['name'],
       address: jsonRes['result']['formatted_address'],
       type: jsonRes['result']['types'][0],
@@ -193,6 +204,8 @@ class Location {
       id: id,
       isAdded: true,
     );
+
+    return locationMemo[id]!;
   }
 
   static Future<List<Location>> getPins(User user) async {

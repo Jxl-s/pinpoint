@@ -50,6 +50,7 @@ class Note {
             id: note.id,
             author: user,
             note: note.get('note'),
+            date: note.get('date').toDate(),
             location: locationResult),
       );
     }
