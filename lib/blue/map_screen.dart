@@ -232,7 +232,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       height: 8,
                       decoration: BoxDecoration(
                         color: location.isAdded
-                            ? Colors.blue
+                            ? Theme.of(context).primaryColor
                             : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
@@ -362,7 +362,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: selectedLocation!.isAdded ? Colors.red : Colors.blue,
+                    color: selectedLocation!.isAdded
+                        ? Colors.red
+                        : Theme.of(context).primaryColor,
                   ),
                 ),
               ),
@@ -454,7 +456,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       height: 8,
                       decoration: BoxDecoration(
                         color: location.isAdded
-                            ? Colors.blue
+                            ? Theme.of(context).primaryColor
                             : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),

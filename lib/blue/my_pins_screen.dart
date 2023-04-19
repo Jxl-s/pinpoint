@@ -26,7 +26,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
     User? user = await AuthService.getLoggedUser();
     if (user != null) {
       List<Location> locations = await Location.getPins(user);
-      
+
       setState(() {
         pinnedLocations = locations;
         loaded = true;
@@ -39,7 +39,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
     super.initState();
     fetchData().then((value) => sortPins());
   }
-  
+
   Future<bool> addNote(Location location, String note) async {
     User? loggedUser = await AuthService.getLoggedUser();
     if (note.isEmpty) return false;
@@ -53,7 +53,8 @@ class _MyPinsScreenState extends State<MyPinsScreen>
     );
 
     bool success = await newNote.create();
-    showNotification(context: context, text: success ? 'Added note!' : 'Error adding note');
+    showNotification(
+        context: context, text: success ? 'Added note!' : 'Error adding note');
 
     return true;
   }
@@ -164,8 +165,8 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                     nextSort();
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.blue),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).primaryColor),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -187,8 +188,8 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                     nextOrder();
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.blue),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).primaryColor),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -243,7 +244,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Theme.of(context).primaryColor,
                         shape: BoxShape.circle,
                       ),
                     ),

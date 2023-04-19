@@ -106,7 +106,7 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
               children: <Widget>[
                     DrawerHeader(
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Theme.of(context).primaryColor,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +190,8 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
   Widget PageButton(PageItem page) {
     ButtonStyle buttonStyle = widget.title == page.title
         ? TextButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.blue)
+            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).primaryColor)
         : TextButton.styleFrom(
             foregroundColor: Colors.black.withOpacity(0.5),
           );

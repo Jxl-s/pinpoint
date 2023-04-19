@@ -239,23 +239,35 @@ class User {
 
     print("is id??");
     if (q.docs.length <= 0) return false;
-  print("found id");
+    print("found id");
     try {
       List<Future<QuerySnapshot>> allQueries = [];
 
       // Delete all pins
-      allQueries.add(DataService.collection('pins').where('author_id', isEqualTo: id).get());
+      allQueries.add(DataService.collection('pins')
+          .where('author_id', isEqualTo: id)
+          .get());
 
       // Delete all notes
-      allQueries.add(DataService.collection('notes').where('author_id', isEqualTo: id).get());
+      allQueries.add(DataService.collection('notes')
+          .where('author_id', isEqualTo: id)
+          .get());
 
       // Delete all friends
-      allQueries.add(DataService.collection('friends').where('friend_id_1', isEqualTo: id).get());
-      allQueries.add(DataService.collection('friends').where('friend_id_2', isEqualTo: id).get());
+      allQueries.add(DataService.collection('friends')
+          .where('friend_id_1', isEqualTo: id)
+          .get());
+      allQueries.add(DataService.collection('friends')
+          .where('friend_id_2', isEqualTo: id)
+          .get());
 
       // delete all requests
-      allQueries.add(DataService.collection('friend_requests').where('request_asker', isEqualTo: id).get());
-      allQueries.add(DataService.collection('friend_requests').where('request_target', isEqualTo: id).get());
+      allQueries.add(DataService.collection('friend_requests')
+          .where('request_asker', isEqualTo: id)
+          .get());
+      allQueries.add(DataService.collection('friend_requests')
+          .where('request_target', isEqualTo: id)
+          .get());
 
       print("running..");
       List<QuerySnapshot> s = await Future.wait(allQueries);
@@ -275,7 +287,9 @@ class User {
 
         // for each of the documents, add it
         for (int i = 0; i < element.docs.length; i++) {
-          allQueries2.add(DataService.collection(collectionName).doc(element.docs[i].id).delete());
+          allQueries2.add(DataService.collection(collectionName)
+              .doc(element.docs[i].id)
+              .delete());
         }
       });
 

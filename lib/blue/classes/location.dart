@@ -278,14 +278,17 @@ class Location {
 
     // get the locations that the user has pinned
 
-    var allRuns = await Future.wait([http.get(
-      Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/textsearch/json?key=${GOOGLE_MAPS_API_KEY}&query=${query}"),
-    ), pinsReference.where('author_id', isEqualTo: user!.id).get() ]);
-    
+    var allRuns = await Future.wait([
+      http.get(
+        Uri.parse(
+            "https://maps.googleapis.com/maps/api/place/textsearch/json?key=${GOOGLE_MAPS_API_KEY}&query=${query}"),
+      ),
+      pinsReference.where('author_id', isEqualTo: user!.id).get()
+    ]);
+
     http.Response searchRequest = allRuns[0] as http.Response;
     QuerySnapshot myPins = allRuns[1] as QuerySnapshot;
-    
+
     var pinsHaveId = (String id) {
       for (int i = 0; i < myPins.docs.length; i++) {
         if (myPins.docs[i].get('location_id') == id) {
@@ -295,7 +298,7 @@ class Location {
 
       return false;
     };
-    
+
     var jsonResults = jsonDecode(searchRequest.body)['results'];
     List<Location> locations = [];
 
@@ -326,7 +329,7 @@ class Location {
         ),
       );
     }
-    
+
     return locations;
   }
 

@@ -484,8 +484,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   Widget SearchResultCard(User friend) {
     String buttonText = friend.requestSent ? 'CANCEL REQUEST' : 'SEND REQUEST';
-    Color buttonColor =
-        friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
+    Color buttonColor = friend.requestSent
+        ? Colors.black.withOpacity(0.5)
+        : Theme.of(context).primaryColor;
 
     print("${friend.isFriend} frien ${friend.name}");
     return Padding(

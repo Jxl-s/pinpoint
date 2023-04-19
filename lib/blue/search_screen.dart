@@ -130,7 +130,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       height: 8,
                       decoration: BoxDecoration(
                         color: location.isAdded
-                            ? Colors.blue
+                            ? Theme
+                            .of(context)
+                            .primaryColor
                             : Colors.black.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
