@@ -37,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
       length: 3,
       child: Scaffold(
         drawer: PinPointDrawer(
-          title: 'Friends',
+          title: 'Location Search',
         ),
         appBar: AppBar(
           title: Text(
