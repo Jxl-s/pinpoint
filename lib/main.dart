@@ -49,7 +49,7 @@ class _MainState extends State<Main> {
     return MaterialApp(
       title: 'PinPoint',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.teal,
         fontFamily: "Poppins",
       ),
       home: screen,
