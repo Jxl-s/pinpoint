@@ -54,9 +54,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ElevatedButton(
               onPressed: (){},
               child: Text("Clear All Pinpoints"),
-            )
+            ),
           ),
-
+          Text("Change Username"),
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Donkey Mario Bowser'
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+                onPressed: (){},
+                child: Text("Change Username")
+            )
+          )
         ],
       ),
     );
