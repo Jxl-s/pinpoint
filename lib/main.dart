@@ -22,9 +22,8 @@ class _MainState extends State<Main> {
   late Widget screen;
   _MainState() {
     //For testing purposes
-    screen = SettingsScreen();
-
-    // screen = LandingScreen(onSignin: fetchUser);
+    // screen = SettingsScreen();
+    screen = LandingScreen(onSignin: fetchUser);
   }
 
   Future<void> fetchUser() async {
@@ -39,7 +38,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    fetchUser();
+    // fetchUser();
   }
 
   @override

@@ -40,8 +40,14 @@ class User {
     try {
       // TODO: using this user id, fetch the friends
       var searchQueries = await Future.wait([
-        userCollection.where('name', isGreaterThanOrEqualTo: query, isLessThan: query + 'z').get(),
-        userCollection.where('email', isGreaterThanOrEqualTo: query, isLessThan: query + 'z').get(),
+        userCollection
+            .where('name',
+                isGreaterThanOrEqualTo: query, isLessThan: query + 'z')
+            .get(),
+        userCollection
+            .where('email',
+                isGreaterThanOrEqualTo: query, isLessThan: query + 'z')
+            .get(),
       ]);
 
       QuerySnapshot results1 = searchQueries[0];
@@ -77,7 +83,6 @@ class User {
         var r = uniqueResults[i];
 
         // check if it's a friend
-
         bool isFriend = false;
         bool hasRequest = false;
 
@@ -86,10 +91,15 @@ class User {
         } else {
           QuerySnapshot isFriendQuery = await friendCollection
               .where('friend_id_1', isEqualTo: loggedUser!.id)
-              .where('friend_id_1', isEqualTo: r.get('user_id'))
-              .where('friend_id_2', isEqualTo: loggedUser!.id)
               .where('friend_id_2', isEqualTo: r.get('user_id'))
               .get();
+
+          QuerySnapshot isFriendQuery2 = await friendCollection
+              .where('friend_id_2', isEqualTo: loggedUser!.id)
+              .where('friend_id_1', isEqualTo: r.get('user_id'))
+              .get();
+
+          var friendQueryRuns = [...isFriendQuery.docs, ...isFriendQuery2.docs];
 
           // then check if it has a pending request
           QuerySnapshot hasRequestQuery = await friendRequestsCollection
@@ -97,8 +107,8 @@ class User {
               .where('request_target', isEqualTo: r.get('user_id'))
               .get();
 
-          isFriend = !isFriendQuery.docs.isEmpty;
-          hasRequest = !hasRequestQuery.docs.isEmpty;
+          isFriend = friendQueryRuns.isNotEmpty;
+          hasRequest = hasRequestQuery.docs.isNotEmpty;
         }
 
         friends.add(

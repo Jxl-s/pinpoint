@@ -6,6 +6,7 @@ import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/my_pins_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
+import 'package:pinpoint/blue/settings_screen.dart';
 import 'package:pinpoint/main.dart';
 
 class PageItem {
@@ -64,6 +65,11 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
         title: 'Friends',
         icon: Icons.person,
         page: FriendsScreen(),
+      ),
+      PageItem(
+        title: 'Settings',
+        icon: Icons.settings,
+        page: SettingsScreen(),
       ),
     ];
 

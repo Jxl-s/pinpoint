@@ -487,6 +487,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
     Color buttonColor =
         friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
 
+    print("${friend.isFriend} frien ${friend.name}");
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Container(
