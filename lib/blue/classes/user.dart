@@ -37,52 +37,86 @@ class User {
       return [];
     }
 
-    // TODO: using this user id, fetch the friends
-    var searchQueries = await Future.wait([
-      userCollection.where('name', isEqualTo: query).get(),
-      userCollection.where('email', isEqualTo: query).get()
-    ]);
+    try {
+      // TODO: using this user id, fetch the friends
+      var searchQueries = await Future.wait([
+        userCollection.where('name', isGreaterThanOrEqualTo: query, isLessThan: query + 'z').get(),
+        userCollection.where('email', isGreaterThanOrEqualTo: query, isLessThan: query + 'z').get(),
+      ]);
 
-    QuerySnapshot results1 = searchQueries[0];
-    QuerySnapshot results2 = searchQueries[1];
+      QuerySnapshot results1 = searchQueries[0];
+      QuerySnapshot results2 = searchQueries[1];
 
-    // merge the two arrays of docs
-    var results = [...results1.docs, ...results2.docs];
+      // merge the two arrays of docs
+      List<QueryDocumentSnapshot> results = [
+        ...results1.docs,
+        ...results2.docs
+      ];
 
-    List<User> friends = [];
-    for (int i = 0; i < results.length; i++) {
-      var r = results[i];
+      print("FOUND ${results.length} RESULTS FOR ${query}");
+      // remove duplicates frmo result
+      List<QueryDocumentSnapshot> uniqueResults = [];
 
-      // check if it's a friend
-      QuerySnapshot isFriendQuery = await friendCollection
-          .where('friend_id_1', isEqualTo: loggedUser!.id)
-          .where('friend_id_1', isEqualTo: r.get('user_id'))
-          .where('friend_id_2', isEqualTo: loggedUser!.id)
-          .where('friend_id_2', isEqualTo: r.get('user_id'))
-          .get();
+      for (var resul in results) {
+        // check if it contains
+        bool contains = false;
+        for (var ex in uniqueResults) {
+          if (ex.id == resul.id) {
+            contains = true;
+            break;
+          }
+        }
 
-      // then check if it has a pending request
-      QuerySnapshot hasRequestQuery = await friendRequestsCollection
-          .where('request_asker', isEqualTo: loggedUser!.id)
-          .where('request_target', isEqualTo: r.get('user_id'))
-          .get();
+        if (!contains) {
+          uniqueResults.add(resul);
+        }
+      }
 
-      bool isFriend = !isFriendQuery.docs.isEmpty;
-      bool hasRequest = !hasRequestQuery.docs.isEmpty;
+      List<User> friends = [];
+      for (int i = 0; i < uniqueResults.length; i++) {
+        var r = uniqueResults[i];
 
-      friends.add(
-        User(
-          id: r.get('user_id'),
-          name: r.get('name'),
-          email: r.get('email'),
-          avatar: r.get('avatar'),
-          isFriend: isFriend,
-          requestSent: hasRequest,
-        ),
-      );
+        // check if it's a friend
+
+        bool isFriend = false;
+        bool hasRequest = false;
+
+        if (loggedUser!.id == r.get('user_id')) {
+          isFriend = true;
+        } else {
+          QuerySnapshot isFriendQuery = await friendCollection
+              .where('friend_id_1', isEqualTo: loggedUser!.id)
+              .where('friend_id_1', isEqualTo: r.get('user_id'))
+              .where('friend_id_2', isEqualTo: loggedUser!.id)
+              .where('friend_id_2', isEqualTo: r.get('user_id'))
+              .get();
+
+          // then check if it has a pending request
+          QuerySnapshot hasRequestQuery = await friendRequestsCollection
+              .where('request_asker', isEqualTo: loggedUser!.id)
+              .where('request_target', isEqualTo: r.get('user_id'))
+              .get();
+
+          isFriend = !isFriendQuery.docs.isEmpty;
+          hasRequest = !hasRequestQuery.docs.isEmpty;
+        }
+
+        friends.add(
+          User(
+            id: r.get('user_id'),
+            name: r.get('name'),
+            email: r.get('email'),
+            avatar: r.get('avatar'),
+            isFriend: isFriend,
+            requestSent: hasRequest,
+          ),
+        );
+      }
+
+      return friends;
+    } catch (e) {
+      return [];
     }
-
-    return friends;
   }
 
   Future<List<User>> getFriends() async {

@@ -20,7 +20,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   bool loaded = false;
 
-  final TextEditingController _friendSearchController = new TextEditingController();
+  final TextEditingController _friendSearchController =
+      new TextEditingController();
 
   _FriendsScreenState() {
     _friendSearchController.addListener(updateFilteredFriends);
@@ -386,6 +387,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
   TextEditingController _searchFieldController = new TextEditingController();
 
   Future<void> searchUsers(String user) async {
+    User? loggedUser = await AuthService.getLoggedUser();
+    if (loggedUser == null) return;
+
     // TODO: will be implemented in the future
     var found = await User.searchUsers(user);
     setState(() {
@@ -398,7 +402,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
     if (me == null) return false;
 
     bool success = await me.cancel(user);
-    showNotification(context: context, text: success ? 'Request cancelled!' : 'Error cancelling request');
+    showNotification(
+        context: context,
+        text: success ? 'Request cancelled!' : 'Error cancelling request');
 
     if (success) {
       setState(() {
@@ -414,7 +420,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
     if (me == null) return false;
 
     bool success = await me.addFriend(user);
-    showNotification(context: context, text: success ? 'Request sent!' : 'Error sending request');
+    showNotification(
+        context: context,
+        text: success ? 'Request sent!' : 'Error sending request');
 
     if (success) {
       setState(() {
@@ -471,7 +479,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   Widget SearchResultCard(User friend) {
     String buttonText = friend.requestSent ? 'CANCEL REQUEST' : 'SEND REQUEST';
     Color buttonColor =
-    friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
+        friend.requestSent ? Colors.black.withOpacity(0.5) : Colors.blue;
 
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
@@ -517,24 +525,24 @@ class _FriendsScreenState extends State<FriendsScreen> {
               children: [
                 !friend.isFriend
                     ? TextButton(
-                  onPressed: friend.requestSent
-                      ? () {
-                    cancelRequest(friend);
-                  }
-                      : () {
-                    sendRequest(friend);
-                  },
-                  child: Text(
-                    buttonText,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: buttonColor,
-                    ),
-                  ),
-                )
+                        onPressed: friend.requestSent
+                            ? () {
+                                cancelRequest(friend);
+                              }
+                            : () {
+                                sendRequest(friend);
+                              },
+                        child: Text(
+                          buttonText,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: buttonColor,
+                          ),
+                        ),
+                      )
                     : SizedBox(
-                  height: 16.0,
-                ),
+                        height: 16.0,
+                      ),
               ],
             )
           ],
