@@ -164,12 +164,16 @@ class Location {
   }
 
   static Future<Location> getLocationFromId(String id) async {
-    http.Response res = await http.get(
-      Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${GOOGLE_MAPS_API_KEY}"),
-    );
+    var queryRuns = await Future.wait([
+      http.get(
+        Uri.parse(
+            "https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${GOOGLE_MAPS_API_KEY}"),
+      ),
+      getLocation()
+    ]);
 
-    Position position = await getLocation();
+    http.Response res = queryRuns[0] as http.Response;
+    Position position = queryRuns[1] as Position;
 
     // TODO: use real position `position`
     double positionLat = 45.5019268;

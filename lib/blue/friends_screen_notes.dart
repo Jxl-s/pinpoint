@@ -23,12 +23,14 @@ String truncateWithEllipsis(int cutoff, String myString) {
 class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
   User friend;
   List<Note> notes = [];
+  bool loaded = false;
 
   Future<void> fetchData() async {
     List<Note> notes = await Note.getNotes(friend);
 
     setState(() {
       this.notes = notes;
+      loaded = true;
     });
   }
 
@@ -46,7 +48,7 @@ class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "PinPoint - Notes",
+          loaded ? "PinPoint - Notes" : "Please wait ...",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,

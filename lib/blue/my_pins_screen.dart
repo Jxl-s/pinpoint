@@ -19,6 +19,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
   int order = 1;
   int sortIndex = 0;
 
+  bool loaded = false;
   List<Location> pinnedLocations = [];
 
   Future<void> fetchData() async {
@@ -28,6 +29,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
       
       setState(() {
         pinnedLocations = locations;
+        loaded = true;
       });
     }
   }
@@ -131,7 +133,7 @@ class _MyPinsScreenState extends State<MyPinsScreen>
       ),
       appBar: AppBar(
         title: Text(
-          "PinPoint - My Pins",
+          loaded ? "PinPoint - My Pins" : "Please wait ...",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,

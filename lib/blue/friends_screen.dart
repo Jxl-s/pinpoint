@@ -18,6 +18,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
   List<User> searchResults = [];
   List<User> requests = [];
 
+  bool loaded = false;
+
   final TextEditingController _friendSearchController = new TextEditingController();
 
   _FriendsScreenState() {
@@ -42,6 +44,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
         this.friends = friends;
         this.filteredFriends = [...friends];
         this.requests = requests;
+
+        loaded = true;
       });
     }
   }
@@ -56,7 +60,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
         ),
         appBar: AppBar(
           title: Text(
-            "PinPoint - Friends",
+            loaded ? "PinPoint - Friends" : "Please wait ...",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
