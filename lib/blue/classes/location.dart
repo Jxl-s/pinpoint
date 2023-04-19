@@ -12,7 +12,8 @@ import 'package:pinpoint/blue/services/data.dart';
 
 String formatPlaceType(String placeType) {
   String formatted = placeType.replaceAll("_", " ");
-  String capitalizedStr = formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+  String capitalizedStr =
+      formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
   return capitalizedStr;
 }
 
@@ -97,35 +98,48 @@ class Location {
       return [];
     }
 
-    // TODO: actually implmenent it
+    // TODO: optimizations
     // get the current geolocation first
-    Position position = await getLocation();
+    var initialRequests = await Future.wait([
+      getLocation(),
+      http.get(
+        Uri.parse(
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${45.5019268},${-73.6731421}&key=${GOOGLE_MAPS_API_KEY}&rankby=prominence&radius=5000"),
+      )
+    ]);
+
+    Position position = initialRequests[0] as Position;
+    http.Response res = initialRequests[1] as http.Response;
 
     double fakeLat = 45.5019268;
     double fakeLng = -73.6731421;
-
-    http.Response res = await http.get(
-      Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${45.5019268},${-73.6731421}&key=${GOOGLE_MAPS_API_KEY}&rankby=prominence&radius=5000"),
-    );
 
     var jsonLocations = jsonDecode(res.body);
     List<dynamic> jsonResults = jsonLocations['results'];
     List<Location> locations = [];
 
+    List<Future<QuerySnapshot>> addedQueries = [];
+
     // go throuogh the json reuslts, create locations
     for (int i = 0; i < jsonResults.length; i++) {
       var res = jsonResults[i];
+
+      addedQueries.add(pinsReference
+          .where('author_id', isEqualTo: user.id)
+          .where('location_id', isEqualTo: res['place_id'])
+          .get());
+    }
+
+    var addedQueriesRun = await Future.wait(addedQueries);
+
+    for (int i = 0; i < jsonResults.length; i++) {
+      var res = jsonResults[i];
+      var existQuery = addedQueriesRun[i];
 
       double lat = res['geometry']['location']['lat'];
       double lng = res['geometry']['location']['lng'];
 
       double dist = distanceCalc(lat, lng, fakeLat, fakeLng);
-
-      QuerySnapshot existQuery = await pinsReference
-          .where('author_id', isEqualTo: user.id)
-          .where('location_id', isEqualTo: res['place_id'])
-          .get();
 
       locations.add(
         Location(
