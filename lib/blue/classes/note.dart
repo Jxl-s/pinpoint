@@ -49,15 +49,24 @@ class Note {
 
     // TODO: optimize the speed
     List<Note> userNotes = [];
+    List<Future<QuerySnapshot>> noteQueries = [];
+
     for (int i = 0; i < noteQuery.docs.length; i++) {
       var element = noteQuery.docs[i];
       if (element.get('author_id') != user.id) continue;
 
       // get the author with it
-      QuerySnapshot authorUserQuery = await DataService.collection("users")
+      noteQueries.add(DataService.collection("users")
           .where('user_id', isEqualTo: element.get('author_id'))
-          .get();
+          .get());
+    }
 
+    var noteQueriesRun = await Future.wait(noteQueries);
+    for (int i = 0; i < noteQuery.docs.length; i++) {
+      var element = noteQuery.docs[i];
+      var authorUserQuery = noteQueriesRun[i];
+
+      if (element.get('author_id') != user.id) continue;
       if (authorUserQuery.docs.isEmpty) continue;
 
       User noteAuthor = User(
@@ -120,9 +129,7 @@ class Note {
   Future<bool> delete() async {
     try {
       // find the existing note
-      await DataService.collection("notes")
-          .doc(this.id)
-          .delete();
+      await DataService.collection("notes").doc(this.id).delete();
 
       return true;
     } catch (e) {
