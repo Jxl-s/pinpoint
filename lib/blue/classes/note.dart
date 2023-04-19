@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/location.dart';
+import 'package:pinpoint/blue/services/data.dart';
 
 class Note {
   String id;
@@ -27,10 +29,56 @@ class Note {
     return Note.example(5);
   }
 
-  static Future<List<Note>> getLocationNotes(User user, Location location) async {
-    // TODO: location id, find all locations, then only select
-    // the ones from the user and from friends of the user
-    return Note.example(5);
+  static Future<List<Note>> getLocationNotes(
+      User user, Location location) async {
+    // Future<QuerySnapshot> friendQuery1 = DataService.collection('friends')
+    //     .where('friend_id_1', isEqualTo: user.id)
+    //     .get();
+    //
+    // Future<QuerySnapshot> friendQuery2 = DataService.collection('friends')
+    //     .where('friend_id_1', isEqualTo: user.id)
+    //     .get();
+
+    // 2. get the notes of that location
+    QuerySnapshot noteQuery = await DataService.collection('notes')
+        .where('location_id', isEqualTo: location.id)
+        .get();
+
+    // var allQueries =
+    //     await Future.wait([friendQuery1, friendQuery2, locationPinsQuery]);
+
+    // TODO: optimize the speed
+    List<Note> userNotes = [];
+    for (int i = 0; i < noteQuery.docs.length; i++) {
+      var element = noteQuery.docs[i];
+      if (element.get('author_id') != user.id) continue;
+
+      // get the author with it
+      QuerySnapshot authorUserQuery = await DataService.collection("users")
+          .where('user_id', isEqualTo: element.get('author_id'))
+          .get();
+
+      if (authorUserQuery.docs.isEmpty) continue;
+
+      User noteAuthor = User(
+        id: element.get('author_id'),
+        name: authorUserQuery.docs[0].get('name'),
+        email: authorUserQuery.docs[0].get('email'),
+        avatar: authorUserQuery.docs[0].get('avatar'),
+      );
+
+      userNotes.add(
+        Note(
+          id: element.id,
+          date: element.get('date').toDate(),
+          author: noteAuthor,
+          note: element.get('note'),
+          location: location,
+        ),
+      );
+    }
+
+    return userNotes;
   }
 
   static Future<List<Note>> getFriendNotes(User user, Location location) async {
@@ -39,18 +87,47 @@ class Note {
   }
 
   Future<bool> create() async {
-    // TODO: create an entry, update the id too
-    return true;
+    try {
+      DocumentReference newNote = await DataService.collection("notes").add({
+        'author_id': author.id,
+        'date': DateTime.now(),
+        'location_id': location.id,
+        'note': note
+      });
+
+      this.id = newNote.id;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> update() async {
-    // TODO: using the id, update the fields
+    try {
+      // find the existing note
+      await DataService.collection("notes")
+          .doc(this.id)
+          .update({'date': DateTime.now(), 'note': note});
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+
     return true;
   }
 
   Future<bool> delete() async {
-    // TODO: using the id, delete the entry
-    return true;
+    try {
+      // find the existing note
+      await DataService.collection("notes")
+          .doc(this.id)
+          .delete();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static List<Note> example(int amount) {

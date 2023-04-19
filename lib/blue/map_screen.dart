@@ -239,7 +239,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     ),
                     SizedBox(width: 8),
                     Text(
-                      location.type,
+                      formatPlaceType(location.type),
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.5),
                         fontSize: 16,
