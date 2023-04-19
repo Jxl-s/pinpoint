@@ -49,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         children: [
           Text("Settings"),
-          SizedBox(
+          Container(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: (){},
@@ -62,12 +62,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
               hintText: 'Donkey Mario Bowser'
             ),
           ),
-          SizedBox(
+          Container(
             width: double.infinity,
             child: ElevatedButton(
                 onPressed: (){},
                 child: Text("Change Username")
             )
+          ),
+
+          //Added temporary gap
+          //Issues: overflow when textfield is used
+          SizedBox(
+            height: 473,
+          ),
+
+          Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: (){},
+                child: Text("Delete Account"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red,
+                  onPrimary: Colors.white
+                )
+              )
           )
         ],
       ),
