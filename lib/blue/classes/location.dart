@@ -111,8 +111,9 @@ class Location {
     Position position = initialRequests[0] as Position;
     http.Response res = initialRequests[1] as http.Response;
 
-    double fakeLat = 45.5019268;
-    double fakeLng = -73.6731421;
+    // TODO: use the real position `position`
+    double positionLat = 45.5019268;
+    double positionLng = -73.6731421;
 
     var jsonLocations = jsonDecode(res.body);
     List<dynamic> jsonResults = jsonLocations['results'];
@@ -139,7 +140,7 @@ class Location {
       double lat = res['geometry']['location']['lat'];
       double lng = res['geometry']['location']['lng'];
 
-      double dist = distanceCalc(lat, lng, fakeLat, fakeLng);
+      double dist = distanceCalc(lat, lng, positionLat, positionLng);
 
       locations.add(
         Location(
@@ -168,8 +169,11 @@ class Location {
           "https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${GOOGLE_MAPS_API_KEY}"),
     );
 
-    double fakeLat = 45.5019268;
-    double fakeLng = -73.6731421;
+    Position position = await getLocation();
+
+    // TODO: use real position `position`
+    double positionLat = 45.5019268;
+    double positionLng = -73.6731421;
 
     var jsonRes = jsonDecode(res.body);
 
@@ -181,7 +185,7 @@ class Location {
       address: jsonRes['result']['formatted_address'],
       type: jsonRes['result']['types'][0],
       location: [lat, lng],
-      distance: distanceCalc(lat, lng, fakeLat, fakeLng).floor(),
+      distance: distanceCalc(lat, lng, positionLat, positionLng).floor(),
       id: id,
       isAdded: true,
     );
@@ -195,16 +199,20 @@ class Location {
     // for each of them, give the appropraite data
     var locationsResults = locationsQuery.docs;
     List<Location> results = [];
+    List<Future<Location>> locationQueries = [];
 
     for (int i = 0; i < locationsResults.length; i++) {
       var loc = locationsResults[i];
-      Location locObj = await getLocationFromId(loc.get('location_id'));
-
-      // get the location from google maps API
-      results.add(locObj);
+      locationQueries.add(getLocationFromId(loc.get('location_id')));
     }
 
-    // return Location.example(5);
+    var locationQueriesRun = await Future.wait(locationQueries);
+
+    for (int i = 0; i < locationQueriesRun.length; i++) {
+      var queryResult = locationQueriesRun[i];
+      results.add(queryResult);
+    }
+
     return results;
   }
 
