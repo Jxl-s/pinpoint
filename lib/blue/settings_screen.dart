@@ -10,11 +10,21 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool loaded = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: PinPointDrawer(
         title: "Settings",
+      ),
+      appBar: AppBar(
+        title: Text(
+          loaded ? "PinPoint - Friends" : "Please wait ...",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+
       ),
     );
   }
