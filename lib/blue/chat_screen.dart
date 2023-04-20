@@ -6,13 +6,19 @@ import 'package:pinpoint/main.dart';
 import './components/drawer.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  User user;
+
+  ChatScreen(this.user);
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState(this.user);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  User user;
+
+  _ChatScreenState(this.user);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,22 +27,10 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          "Pinpoint - Messages",
-          style: TextStyle(
-              fontWeight: FontWeight.bold
-          ),
+          "Pinpoint - Chat",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.email),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
       ),
       body: Column(
         children: [
@@ -57,8 +51,10 @@ class _ChatScreenState extends State<ChatScreen> {
               child: ListView(
                 children: [
                   ChatCards(true, "Hello There Strange Doctor"),
-                  ChatCards(false, "Hello There Iron Man", "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
-                  ChatCards(false, "How are you doing today?", "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
+                  ChatCards(false, "Hello There Iron Man",
+                      "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
+                  ChatCards(false, "How are you doing today?",
+                      "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
                   ChatCards(true, "The weather is very nice!"),
                   ChatCards(true, "Thank you I made it rain"),
                 ],
@@ -69,9 +65,9 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 ButtonTheme(
-                  height: double.infinity,
-                  child: ElevatedButton(onPressed: () {}, child: Icon(Icons.send))
-                ),
+                    height: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: () {}, child: Icon(Icons.send))),
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
@@ -90,69 +86,66 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget ChatCards(bool isSender, String message, [String? receiverImage]) {
     return Container(
-      child:
-      isSender ?
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(15.0),
-            padding: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                border: Border.all(color: Colors.blueAccent),
-                color: Colors.lightBlueAccent
-            ),
-            child: Text(message, style: TextStyle(color: Colors.white),),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
-                    image: NetworkImage(isSender ?
-                        "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
-                        : receiverImage!
-                    )
+      child: isSender
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      border: Border.all(color: Colors.blueAccent),
+                      color: Colors.lightBlueAccent),
+                  child: Text(
+                    message,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
+                          image: NetworkImage(isSender
+                              ? "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
+                              : receiverImage!))),
+                ),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
+                          image: NetworkImage(isSender
+                              ? "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
+                              : receiverImage!))),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
+                  child: Text(
+                    message,
+                    style: TextStyle(color: Colors.white),
+                  ),
                 )
+              ],
             ),
-          ),
-        ],
-      ) 
-          :  
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
-                    image: NetworkImage(isSender ?
-                    "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
-                        : receiverImage!
-                    )
-                )
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(15.0),
-            padding: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                color: Colors.indigo,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                border: Border.all(color: Colors.blueAccent),
-            ),
-            child: Text(message, style: TextStyle(color: Colors.white),),
-          )
-        ],
-      ),
     );
   }
 }
