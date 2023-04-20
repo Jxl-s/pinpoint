@@ -45,11 +45,11 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    print(screen);
     return MaterialApp(
       title: 'PinPoint',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        errorColor: Colors.redAccent,
         fontFamily: "Poppins",
       ),
       home: screen,

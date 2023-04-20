@@ -173,7 +173,7 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
               child: Text(
                 'SIGN OUT',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: Theme.of(context).errorColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),

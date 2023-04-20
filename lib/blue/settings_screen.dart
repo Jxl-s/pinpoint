@@ -100,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       'Yes, delete',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: Theme.of(context).errorColor,
                       ),
                     ),
                     onPressed: () async {
@@ -127,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).errorColor,
               ),
               child: Text(
                 "Clear All Pinpoints",
@@ -149,7 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       'Yes, delete',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: Theme.of(context).errorColor,
                       ),
                     ),
                     onPressed: () async {
@@ -175,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).errorColor,
               ),
               child: Text(
                 "Delete All Notes",
@@ -245,7 +245,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Text(
                             'Delete Account',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, color: Colors.red),
+                                fontWeight: FontWeight.bold, color: Theme.of(context).errorColor),
                           ),
                           onPressed: () async {
                             print(deleteEmailController.text);
@@ -287,7 +287,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).errorColor),
             ),
           )
         ],
