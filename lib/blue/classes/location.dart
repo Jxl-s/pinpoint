@@ -126,22 +126,27 @@ class Location {
     List<Location> locations = [];
 
     List<Future<QuerySnapshot>> addedQueries = [];
-
+    QuerySnapshot existingPins = await pinsReference
+        .where('author_id', isEqualTo: user.id)
+        .get();
+    
     // go throuogh the json reuslts, create locations
+    Set<String> pinnedIds = {};
     for (int i = 0; i < jsonResults.length; i++) {
       var res = jsonResults[i];
 
-      addedQueries.add(pinsReference
-          .where('author_id', isEqualTo: user.id)
-          .where('location_id', isEqualTo: res['place_id'])
-          .get());
+      // check if the docs include res['place_id']
+      for (int j = 0; j < existingPins.docs.length; j++) {
+        QueryDocumentSnapshot existPin = existingPins.docs[j];
+        if (existPin.get('location_id') == res['place_id']) {
+          pinnedIds.add(res['place_id']);
+        }
+      }
     }
 
-    var addedQueriesRun = await Future.wait(addedQueries);
-
     for (int i = 0; i < jsonResults.length; i++) {
       var res = jsonResults[i];
-      var existQuery = addedQueriesRun[i];
+      var existQuery = pinnedIds.contains(res['place_id']);
 
       double lat = res['geometry']['location']['lat'];
       double lng = res['geometry']['location']['lng'];
@@ -155,7 +160,7 @@ class Location {
           distance: dist.floor(),
           name: res['name'],
           address: res['vicinity'],
-          isAdded: existQuery.docs.isNotEmpty,
+          isAdded: existQuery,
           location: [
             lat,
             lng,

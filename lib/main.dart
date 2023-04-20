@@ -40,7 +40,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    fetchUser();
+    // fetchUser();
   }
 
   @override
@@ -49,7 +49,7 @@ class _MainState extends State<Main> {
       title: 'PinPoint',
       theme: ThemeData(
         primarySwatch: Colors.teal,
-        errorColor: Colors.redAccent,
+        errorColor: Colors.red,
         fontFamily: "Poppins",
       ),
       home: screen,
