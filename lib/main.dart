@@ -6,6 +6,7 @@ import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/search_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
+import 'package:pinpoint/blue/about_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +24,9 @@ class _MainState extends State<Main> {
   late Widget screen;
   _MainState() {
     //For testing purposes
-    // screen = SettingsScreen();
+    screen = AboutScreen();
     // screen = LandingScreen(onSignin: fetchUser);
-    screen = SearchScreen();
+    // screen = SearchScreen();
   }
 
   Future<void> fetchUser() async {
