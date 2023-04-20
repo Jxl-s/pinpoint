@@ -6,6 +6,7 @@ import 'package:pinpoint/blue/components/drawer.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pinpoint/blue/share_screen.dart';
 
 class MapScreen extends StatefulWidget {
   Location? location;
@@ -95,8 +96,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   // Data functions
-  bool shareLocation(Location? location) {
+  Future<bool> shareLocation(Location? location) async {
+    User? user = await AuthService.getLoggedUser();
     if (location == null) return false;
+    if (user == null) return false;
+
+    // show the share location page
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => ShareScreen(location)));
     return true;
   }
 
@@ -548,7 +557,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: Text(
                     'REMOVE PIN',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Theme.of(context).errorColor),
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).errorColor),
                   ),
                 ),
               ],

@@ -18,6 +18,21 @@ class Message {
   })  : id = id ?? '',
         date = date ?? DateTime.now();
 
+  static String encodeLocation(String locationId) {
+    return "__PINPOINT_LOCATION:{${locationId}}__";
+  }
+
+  static String decodeLocation(String encodedLocation) {
+    final startIndex = encodedLocation.indexOf('{') + 1;
+    final endIndex = encodedLocation.indexOf('}');
+    return encodedLocation.substring(startIndex, endIndex);
+  }
+
+  static bool isEncodedLocation(String s) {
+    RegExp pattern = RegExp(r'^__PINPOINT_LOCATION:\{.*\}__$');
+    return pattern.hasMatch(s);
+  }
+
   static Future<List<Message>> getFromChannel(
       String user1, String user2) async {
     QuerySnapshot snapshot1 = await DataService.collection('messages')
@@ -46,12 +61,17 @@ class Message {
     });
 
     for (int i = 0; i < messages.length; i++) {
+      String messageContent = messages[i].get('content');
+      if (Message.isEncodedLocation(messageContent)) {
+        messageContent = '[Location]';
+      }
+
       messagesList.add(
         Message(
           author_id: messages[i].get('author_id'),
           recipient_id: messages[i].get('recipient_id'),
           date: messages[i].get('date').toDate(),
-          content: messages[i].get('content'),
+          content: messageContent,
         ),
       );
     }
