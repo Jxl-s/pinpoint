@@ -25,7 +25,7 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          "About Us",
+          "PinPoint - About",
           style: TextStyle(
               fontWeight: FontWeight.bold
           ),
@@ -41,6 +41,46 @@ class _AboutScreenState extends State<AboutScreen> {
             );
           },
         ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Text(
+                "About Us",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30, right: 20, left: 20),
+            child: Center(
+              child: Text(
+                "This application was developped by college students for a mobile"
+                    "application development module",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey
+                ),
+              ),
+            ),
+          ),
+          Text("Jia Xuan Li", style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey
+            ),
+          ),
+          Text("Mert Kairstan Salvador", style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey
+            ),
+          )
+        ],
       ),
     );
   }
