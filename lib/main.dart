@@ -42,7 +42,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    // fetchUser();
+    fetchUser();
   }
 
   @override

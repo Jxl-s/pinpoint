@@ -1,30 +1,36 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/message.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/services/auth.dart';
+import 'package:pinpoint/blue/services/data.dart';
 import 'package:pinpoint/main.dart';
 import './components/drawer.dart';
 
 class ChatScreen extends StatefulWidget {
   User user;
+  User loggedUser;
 
-  ChatScreen(this.user);
+  ChatScreen(this.loggedUser, this.user);
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState(this.user);
+  State<ChatScreen> createState() =>
+      _ChatScreenState(this.loggedUser, this.user);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   User user;
+  User loggedUser;
+  TextEditingController messageController = TextEditingController();
 
-  _ChatScreenState(this.user);
+  _ChatScreenState(this.loggedUser, this.user);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: PinPointDrawer(
-        title: "Messages",
-      ),
       appBar: AppBar(
         title: Text(
           "Pinpoint - Chat",
@@ -32,120 +38,182 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Center(
-              child: Text(
-                "Doctor Strange",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              child: ListView(
-                children: [
-                  ChatCards(true, "Hello There Strange Doctor"),
-                  ChatCards(false, "Hello There Iron Man",
-                      "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
-                  ChatCards(false, "How are you doing today?",
-                      "https://lumiere-a.akamaihd.net/v1/images/p_doctorstrange_19918_516f94d3.jpeg?region=0%2C0%2C540%2C810"),
-                  ChatCards(true, "The weather is very nice!"),
-                  ChatCards(true, "Thank you I made it rain"),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            child: Row(
-              children: [
-                ButtonTheme(
-                    height: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {}, child: Icon(Icons.send))),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter a search term',
-                    ),
+      body: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  "@${user.name}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
                 ),
-              ],
+              ),
             ),
-          )
-        ],
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: DataService.collection('messages')
+                    .orderBy('date')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+
+                  final messages = snapshot.data!.docs;
+                  var myMessages = [];
+
+                  for (var message in messages) {
+                    String authorId = message.get('author_id');
+                    String recipientId = message.get('recipient_id');
+
+                    if (authorId != loggedUser.id &&
+                        recipientId != loggedUser.id) {
+                      continue;
+                    }
+
+                    myMessages.add(message);
+                  }
+
+                  // convert it into a message
+
+                  return ListView(
+                      children: myMessages.map((e) {
+                    User targetUser =
+                        e.get('author_id') == loggedUser.id ? loggedUser : user;
+                    Message formattedMessage = Message(
+                        author_id: e.get('author_id'),
+                        recipient_id: e.get('recipient_id'),
+                        content: e.get('content'),
+                        date: e.get('date').toDate());
+
+                    return ChatCard(targetUser, formattedMessage);
+                  }).toList());
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Icon(Icons.pin_drop, size: 20),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: TextField(
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter text here',
+                            contentPadding: EdgeInsets.all(10.0),
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 70,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        String text = messageController.text;
+                        if (text.isEmpty) return;
+
+                        Message newMessage = Message(
+                            author_id: loggedUser.id,
+                            recipient_id: user.id,
+                            content: text);
+                        await newMessage.create();
+                        messageController.clear();
+                      },
+                      child: Icon(Icons.send, size: 20),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Widget ChatCards(bool isSender, String message, [String? receiverImage]) {
+  Widget ChatCard(User sender, Message message) {
+    var messageBubble = [
+      Container(
+        margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
+            image: NetworkImage(sender.avatar),
+          ),
+        ),
+      ),
+      SizedBox(
+        width: 5,
+      ),
+      Expanded(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: sender == loggedUser
+                ? Theme.of(context).primaryColor
+                : Colors.blueGrey,
+          ),
+          child: Text(
+            message.content,
+            // textAlign: sender == loggedUser ? TextAlign.end : TextAlign.start,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ];
+    //
+
+    if (sender == loggedUser) {
+      messageBubble = messageBubble.reversed.toList();
+    }
+
     return Container(
-      child: isSender
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(15.0),
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      border: Border.all(color: Colors.blueAccent),
-                      color: Colors.lightBlueAccent),
-                  child: Text(
-                    message,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
-                          image: NetworkImage(isSender
-                              ? "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
-                              : receiverImage!))),
-                ),
-              ],
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          // image: NetworkImage(friend.avatar), fit: BoxFit.fill),
-                          image: NetworkImage(isSender
-                              ? "https://m.media-amazon.com/images/M/MV5BMjE5MzcyNjk1M15BMl5BanBnXkFtZTcwMjQ4MjcxOQ@@._V1_FMjpg_UX1000_.jpg"
-                              : receiverImage!))),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(15.0),
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    border: Border.all(color: Colors.blueAccent),
-                  ),
-                  child: Text(
-                    message,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            ),
+      padding: EdgeInsets.only(top: 4, bottom: 4, left: 15, right: 15),
+      child: Row(
+        mainAxisAlignment: sender == loggedUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: messageBubble,
+      ),
     );
   }
 }

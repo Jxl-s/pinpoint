@@ -36,6 +36,7 @@ class ContactsScreen extends StatefulWidget {
 class _ContactsScreenState extends State<ContactsScreen> {
   List<User> friends = [];
   Map<User, Message?> latestMessages = {};
+  User? loggedUser;
 
   bool loaded = false;
 
@@ -66,6 +67,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       }
 
       setState(() {
+        this.loggedUser = user;
         this.friends = friends;
         this.latestMessages = latestMessages;
 
@@ -131,8 +133,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   Widget MessageCard(User user, Message? latestMessage) {
+    print('new message card!');
     String timeString = latestMessage != null
-        ? formatTime(latestMessage!.date.difference(DateTime.now()))
+        ? formatTime(DateTime.now().difference(latestMessage!.date))
         : "";
 
     String lastMessageString =
@@ -142,12 +145,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: new InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatScreen(user),
-            ),
-          );
+          if (loggedUser != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(loggedUser!, user),
+              ),
+            );
+          }
         },
         child: Container(
           padding: EdgeInsets.all(16),
@@ -184,14 +189,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         // Text(friend.email),
-                        FittedBox(
-                          child: Text(
-                            shortenString(lastMessageString),
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        )
+                        Text(
+                          shortenString(lastMessageString),
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          style: TextStyle(color: Colors.grey),
+                        ),
                       ],
                     ),
                   ),

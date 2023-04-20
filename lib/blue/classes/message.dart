@@ -9,13 +9,14 @@ class Message {
   DateTime date;
   String content;
 
-  Message(
-      {String? id,
-      required this.author_id,
-      required this.recipient_id,
-      required this.date,
-      required this.content})
-      : id = id ?? '';
+  Message({
+    String? id,
+    DateTime? date,
+    required this.author_id,
+    required this.recipient_id,
+    required this.content,
+  })  : id = id ?? '',
+        date = date ?? DateTime.now();
 
   static Future<List<Message>> getFromChannel(
       String user1, String user2) async {
@@ -25,7 +26,7 @@ class Message {
         .get();
 
     QuerySnapshot snapshot2 = await DataService.collection('messages')
-        .where('recipient_id', isEqualTo: user2)
+        .where('recipient_id', isEqualTo: user1)
         .where('author_id', isEqualTo: user2)
         .get();
 
@@ -39,7 +40,7 @@ class Message {
     // sort the messages based on the date
     messages.sort((a, b) {
       DateTime dateA = a.get('date').toDate();
-      DateTime dateB = a.get('date').toDate();
+      DateTime dateB = b.get('date').toDate();
 
       return dateA.compareTo(dateB);
     });
