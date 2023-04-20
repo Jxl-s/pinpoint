@@ -244,7 +244,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         'Yes, unfriend',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          color: Theme.of(context).errorColor,
                         ),
                       ),
                       onPressed: () async {
@@ -271,7 +271,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   child: Text(
                     'UNFRIEND',
                     style: TextStyle(
-                        color: Colors.redAccent, fontWeight: FontWeight.bold),
+                        color: Theme.of(context).errorColor,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

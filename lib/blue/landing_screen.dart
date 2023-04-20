@@ -8,6 +8,7 @@ import 'package:pinpoint/blue/services/auth.dart';
 
 class LandingScreen extends StatefulWidget {
   Function onSignin;
+
   LandingScreen({required Function this.onSignin});
 
   @override

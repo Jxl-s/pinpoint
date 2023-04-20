@@ -24,10 +24,8 @@ class _MainState extends State<Main> {
   // Main({super.key});
   late Widget screen;
   _MainState() {
-    //For testing purposes
-    screen = AboutScreen();
-    // screen = LandingScreen(onSignin: fetchUser);
-    // screen = SearchScreen();
+    // For testing purposes
+    screen = LandingScreen(onSignin: fetchUser);
   }
 
   Future<void> fetchUser() async {
@@ -42,16 +40,16 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    // fetchUser();
+    fetchUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(screen);
     return MaterialApp(
       title: 'PinPoint',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        errorColor: Colors.redAccent,
         fontFamily: "Poppins",
       ),
       home: screen,

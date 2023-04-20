@@ -53,13 +53,15 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
         'Yes, delete',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.red,
+          color: Theme.of(context).errorColor,
         ),
       ),
       onPressed: () async {
         // TODO: add real functionality here
         bool success = await note.delete();
-        showNotification(context: context, text: success ? 'Deleted note!' : 'Error deleting note');
+        showNotification(
+            context: context,
+            text: success ? 'Deleted note!' : 'Error deleting note');
 
         if (success) {
           setState(() {
@@ -101,7 +103,9 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
                 note.note = inputText;
                 bool success = await note.update();
 
-                showNotification(context: context, text: success ? 'Modified note!' : 'Error modifying note');
+                showNotification(
+                    context: context,
+                    text: success ? 'Modified note!' : 'Error modifying note');
 
                 if (success) {
                   setState(() {});
@@ -213,7 +217,9 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
                   child: Text(
                     'DELETE',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.red),
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).errorColor,
+                    ),
                   ),
                 ),
                 TextButton(

@@ -363,7 +363,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: selectedLocation!.isAdded
-                        ? Colors.red
+                        ? Theme.of(context).errorColor
                         : Theme.of(context).primaryColor,
                   ),
                 ),
@@ -519,7 +519,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         submit: Text(
                           'Yes, remove',
                           style: TextStyle(
-                            color: Colors.red,
+                            color: Theme.of(context).errorColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -548,7 +548,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: Text(
                     'REMOVE PIN',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.red),
+                        fontWeight: FontWeight.w600, color: Theme.of(context).errorColor),
                   ),
                 ),
               ],
