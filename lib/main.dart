@@ -8,6 +8,7 @@ import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
 import 'package:pinpoint/blue/about_screen.dart';
 import 'package:pinpoint/blue/messages_screen.dart';
+import 'package:pinpoint/blue/chat_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,8 @@ class _MainState extends State<Main> {
   late Widget screen;
   _MainState() {
     // For testing purposes
-    screen = LandingScreen(onSignin: fetchUser);
+    screen = ChatScreen();
+    // screen = LandingScreen(onSignin: fetchUser);
   }
 
   Future<void> fetchUser() async {
