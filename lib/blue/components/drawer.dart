@@ -11,7 +11,8 @@ import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
 import 'package:pinpoint/main.dart';
 
-class PageItem {
+class PageIndicator {}
+class PageItem extends PageIndicator {
   String title;
   IconData icon;
   Widget page;
@@ -22,6 +23,8 @@ class PageItem {
     required this.page,
   });
 }
+
+class PageSeparator extends PageIndicator {}
 
 class PinPointDrawer extends StatefulWidget {
   String title = "";
@@ -49,7 +52,7 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
     return user;
   }
 
-  late List<PageItem> pages;
+  late List<PageIndicator> pages;
 
   _PinPointDrawerState() {
     this.pages = [
@@ -68,11 +71,13 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
         icon: Icons.pin_drop,
         page: MyPinsScreen(),
       ),
+      PageSeparator(),
       PageItem(
         title: 'Friends',
         icon: Icons.person,
         page: FriendsScreen(),
       ),
+      PageSeparator(),
       PageItem(
         title: 'Settings',
         icon: Icons.settings,
@@ -87,7 +92,8 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
 
     fetchUser().then((value) {
       setState(() {
-        this.pages.add(
+        this.pages.insert(
+              5,
               PageItem(
                 title: 'View My Notes',
                 icon: Icons.note,
@@ -160,7 +166,17 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
                       ),
                     ),
                   ] +
-                  pages.map((e) => PageButton(e)).toList(),
+                  pages.map((e) {
+                    if (e is PageItem) {
+                      return PageButton(e);
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: Divider(),
+                      );
+                    }
+
+                  }).toList(),
             ),
           ),
           SizedBox(

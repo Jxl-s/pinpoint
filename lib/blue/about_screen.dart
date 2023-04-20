@@ -26,15 +26,13 @@ class _AboutScreenState extends State<AboutScreen> {
       appBar: AppBar(
         title: Text(
           "PinPoint - About",
-          style: TextStyle(
-              fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.contact_support),
+              icon: const Icon(Icons.menu),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -60,25 +58,20 @@ class _AboutScreenState extends State<AboutScreen> {
             padding: const EdgeInsets.only(bottom: 30, right: 20, left: 20),
             child: Center(
               child: Text(
-                "This application was developped by college students for a mobile"
-                    "application development module",
+                "This application was developped by college students for a mobile "
+                "application development course.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             ),
           ),
-          Text("Jia Xuan Li", style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey
-            ),
+          Text(
+            "Jia Xuan Li",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
-          Text("Mert Kairstan Salvador", style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey
-            ),
+          Text(
+            "Mert Kairstan Salvador",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           )
         ],
       ),
