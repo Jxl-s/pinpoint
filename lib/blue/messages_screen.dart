@@ -14,6 +14,29 @@ class MessagesScreen extends StatefulWidget {
 class _MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      drawer: PinPointDrawer(
+        title: "Messages",
+      ),
+      appBar: AppBar(
+        title: Text(
+          "PinPoint - Messages",
+          style: TextStyle(
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        centerTitle: true,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.email),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }

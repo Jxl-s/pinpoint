@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/about_screen.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/friends_screen.dart';
 import 'package:pinpoint/blue/friends_screen_notes.dart';
@@ -76,6 +77,11 @@ class _PinPointDrawerState extends State<PinPointDrawer> {
         title: 'Settings',
         icon: Icons.settings,
         page: SettingsScreen(),
+      ),
+      PageItem(
+        title: 'About',
+        icon: Icons.contact_support,
+        page: AboutScreen(),
       ),
     ];
 
