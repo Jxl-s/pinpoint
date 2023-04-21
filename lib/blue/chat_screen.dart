@@ -9,6 +9,7 @@ import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/map_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/services/data.dart';
+import 'package:pinpoint/blue/share_chat_screen.dart';
 import 'package:pinpoint/main.dart';
 import './components/drawer.dart';
 
@@ -117,7 +118,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 50,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    ShareChatScreen(user)));
+                      },
                       child: Icon(Icons.pin_drop, size: 20),
                     ),
                   ),

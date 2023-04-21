@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/chat_screen.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/components/confirm_dialog.dart';
 import 'package:pinpoint/blue/friends_screen_notes.dart';
@@ -210,7 +211,12 @@ class _FriendsScreenState extends State<FriendsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    User? loggedUser = await AuthService.getLoggedUser();
+                    if (loggedUser == null) return;
+
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChatScreen(loggedUser!, friend)));
+                  },
                   child: Text(
                     'MESSAGE',
                     style: TextStyle(
