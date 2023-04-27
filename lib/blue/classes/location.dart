@@ -285,7 +285,7 @@ class Location {
 
     http.Response searchRequest = allRuns[0] as http.Response;
     QuerySnapshot myPins = allRuns[1] as QuerySnapshot;
-    Position position = allRuns[3] as Position;
+    Position position = allRuns[2] as Position;
 
     var pinsHaveId = (String id) {
       for (int i = 0; i < myPins.docs.length; i++) {
