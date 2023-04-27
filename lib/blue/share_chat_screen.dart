@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/chat_screen.dart';
 import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/message.dart';
 import 'package:pinpoint/blue/classes/user.dart';
@@ -18,7 +19,7 @@ class _ShareChatScreenState extends State<ShareChatScreen>
     with TickerProviderStateMixin {
   User user;
   bool loaded = false;
-  List<User> friends = [];
+  List<Location> pins = [];
 
   _ShareChatScreenState(this.user);
 
@@ -26,9 +27,9 @@ class _ShareChatScreenState extends State<ShareChatScreen>
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) return;
 
-    List<User> friends = await loggedUser!.getFriends();
+    List<Location> pins = await Location.getPins(loggedUser!);
     setState(() {
-      this.friends = friends;
+      this.pins = pins;
       loaded = true;
     });
   }
@@ -67,7 +68,7 @@ class _ShareChatScreenState extends State<ShareChatScreen>
             ),
             Expanded(
               child: ListView(
-                children: friends.map((e) => ShareFriendCard(e)).toList(),
+                children: pins.map((e) => ShareLocationCard(e)).toList(),
               ),
             )
           ],
@@ -76,7 +77,7 @@ class _ShareChatScreenState extends State<ShareChatScreen>
     );
   }
 
-  Widget ShareFriendCard(User friend) {
+  Widget ShareLocationCard(Location location) {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Container(
@@ -88,27 +89,16 @@ class _ShareChatScreenState extends State<ShareChatScreen>
         ),
         child: Column(
           children: [
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 15.0),
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: NetworkImage(friend.avatar), fit: BoxFit.fill),
-                  ),
+                Text(
+                  location.name,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "@${friend.name}",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(friend.email),
-                  ],
+                Text(
+                  location.address,
+                  style: TextStyle(color: Colors.black.withOpacity(0.5)),
                 ),
               ],
             ),
@@ -118,7 +108,25 @@ class _ShareChatScreenState extends State<ShareChatScreen>
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // Send the message
+                      User? loggedUser = await AuthService.getLoggedUser();
+                      if (loggedUser == null) return;
+
+                      // create a new message
+                      Message newMessage = Message(
+                        author_id: loggedUser.id,
+                        recipient_id: user.id,
+                        content: Message.encodeLocation(location.id),
+                        date: DateTime.now(),
+                      );
+
+                      try {
+                        await newMessage.create();
+                      } catch (e) {}
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext contex) => ChatScreen(loggedUser, user)));
+                    },
                     child: Text(
                       'SHARE',
                       style: TextStyle(

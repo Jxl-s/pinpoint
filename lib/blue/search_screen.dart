@@ -23,7 +23,6 @@ class _SearchScreenState extends State<SearchScreen> {
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) return;
 
-    // TODO: will be implemented in the future
     List<Location> found = await Location.searchLocations(query);
     setState(() {
       searchResults = found;

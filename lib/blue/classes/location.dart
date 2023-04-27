@@ -104,32 +104,24 @@ class Location {
       return [];
     }
 
-    // TODO: optimizations
     // get the current geolocation first
-    var initialRequests = await Future.wait([
-      getLocation(),
-      http.get(
-        Uri.parse(
-            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${45.5019268},${-73.6731421}&key=${GOOGLE_MAPS_API_KEY}&rankby=prominence&radius=5000"),
-      )
-    ]);
+    Position position = await getLocation();
+    http.Response res = await http.get(
+      Uri.parse(
+          "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${position.latitude},${position.longitude}&key=${GOOGLE_MAPS_API_KEY}&rankby=prominence&radius=5000"),
+    );
 
-    Position position = initialRequests[0] as Position;
-    http.Response res = initialRequests[1] as http.Response;
-
-    // TODO: use the real position `position`
-    double positionLat = 45.5019268;
-    double positionLng = -73.6731421;
+    double positionLat = position.latitude;
+    double positionLng = position.longitude;
 
     var jsonLocations = jsonDecode(res.body);
     List<dynamic> jsonResults = jsonLocations['results'];
     List<Location> locations = [];
 
     List<Future<QuerySnapshot>> addedQueries = [];
-    QuerySnapshot existingPins = await pinsReference
-        .where('author_id', isEqualTo: user.id)
-        .get();
-    
+    QuerySnapshot existingPins =
+        await pinsReference.where('author_id', isEqualTo: user.id).get();
+
     // go throuogh the json reuslts, create locations
     Set<String> pinnedIds = {};
     for (int i = 0; i < jsonResults.length; i++) {
@@ -190,9 +182,8 @@ class Location {
     http.Response res = queryRuns[0] as http.Response;
     Position position = queryRuns[1] as Position;
 
-    // TODO: use real position `position`
-    double positionLat = 45.5019268;
-    double positionLng = -73.6731421;
+    double positionLat = position.latitude;
+    double positionLng = position.longitude;
 
     var jsonRes = jsonDecode(res.body);
 
@@ -288,11 +279,13 @@ class Location {
         Uri.parse(
             "https://maps.googleapis.com/maps/api/place/textsearch/json?key=${GOOGLE_MAPS_API_KEY}&query=${query}"),
       ),
-      pinsReference.where('author_id', isEqualTo: user!.id).get()
+      pinsReference.where('author_id', isEqualTo: user!.id).get(),
+      getLocation(),
     ]);
 
     http.Response searchRequest = allRuns[0] as http.Response;
     QuerySnapshot myPins = allRuns[1] as QuerySnapshot;
+    Position position = allRuns[3] as Position;
 
     var pinsHaveId = (String id) {
       for (int i = 0; i < myPins.docs.length; i++) {
@@ -307,8 +300,8 @@ class Location {
     var jsonResults = jsonDecode(searchRequest.body)['results'];
     List<Location> locations = [];
 
-    double positionLat = 45.5019268;
-    double positionLng = -73.6731421;
+    double positionLat = position.latitude;
+    double positionLng = position.longitude;
 
     for (int i = 0; i < jsonResults.length; i++) {
       var res = jsonResults[i];
