@@ -1,3 +1,4 @@
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,12 +75,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     String authorId = message.get('author_id');
                     String recipientId = message.get('recipient_id');
 
-                    if (authorId != loggedUser.id &&
-                        recipientId != loggedUser.id) {
-                      continue;
+                    // make sure the message is part of the recipient
+                    if ((authorId == user.id && recipientId == loggedUser.id) ||
+                        (authorId == loggedUser.id && recipientId == user.id)) {
+                      myMessages.add(message);
                     }
-
-                    myMessages.add(message);
                   }
 
                   // convert it into a message
@@ -87,23 +87,23 @@ class _ChatScreenState extends State<ChatScreen> {
                       reverse: true,
                       children: myMessages
                           .map((e) {
-                            User targetUser =
-                                e.get('author_id') == loggedUser.id
-                                    ? loggedUser
-                                    : user;
-                            Message formattedMessage = Message(
-                                author_id: e.get('author_id'),
-                                recipient_id: e.get('recipient_id'),
-                                content: e.get('content'),
-                                date: e.get('date').toDate());
+                        User targetUser =
+                        e.get('author_id') == loggedUser.id
+                            ? loggedUser
+                            : user;
+                        Message formattedMessage = Message(
+                            author_id: e.get('author_id'),
+                            recipient_id: e.get('recipient_id'),
+                            content: e.get('content'),
+                            date: e.get('date').toDate());
 
-                            if (Message.isEncodedLocation(e.get('content'))) {
-                              return ChatLocationCard(loggedUser, targetUser,
-                                  Message.decodeLocation(e.get('content')));
-                            }
+                        if (Message.isEncodedLocation(e.get('content'))) {
+                          return ChatLocationCard(loggedUser, targetUser,
+                              Message.decodeLocation(e.get('content')));
+                        }
 
-                            return ChatCard(targetUser, formattedMessage);
-                          })
+                        return ChatCard(targetUser, formattedMessage);
+                      })
                           .toList()
                           .reversed
                           .toList());
@@ -287,58 +287,58 @@ class _ChatLocationCardState extends State<ChatLocationCard> {
       loc == null
           ? Text('hi')
           : Expanded(
-              child: Container(
-                padding:
-                    EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: widget.sender == widget.loggedUser
-                      ? Theme.of(context).primaryColor
-                      : Colors.blueGrey,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      loc!.name,
-                      // textAlign: sender == loggedUser ? TextAlign.end : TextAlign.start,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.white),
+        child: Container(
+          padding:
+          EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: widget.sender == widget.loggedUser
+                ? Theme.of(context).primaryColor
+                : Colors.blueGrey,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                loc!.name,
+                // textAlign: sender == loggedUser ? TextAlign.end : TextAlign.start,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white),
+              ),
+              Text(
+                loc!.address,
+                style: TextStyle(color: Colors.white.withOpacity(0.5)),
+              ),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                MapScreen(loc)));
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      widget.sender == widget.loggedUser
+                          ? Theme.of(context).primaryColor
+                          : Colors.blueGrey,
                     ),
-                    Text(
-                      loc!.address,
-                      style: TextStyle(color: Colors.white.withOpacity(0.5)),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      MapScreen(loc)));
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            widget.sender == widget.loggedUser
-                                ? Theme.of(context).primaryColor
-                                : Colors.blueGrey,
-                          ),
-                        ),
-                        child: Text(
-                          'VIEW LOCATION',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                  child: Text(
+                    'VIEW LOCATION',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
     ];
     //
 
@@ -359,3 +359,4 @@ class _ChatLocationCardState extends State<ChatLocationCard> {
     );
   }
 }
+
