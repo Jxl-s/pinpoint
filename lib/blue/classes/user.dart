@@ -38,7 +38,6 @@ class User {
     }
 
     try {
-      // TODO: using this user id, fetch the friends
       var searchQueries = await Future.wait([
         userCollection
             .where('name',
@@ -371,7 +370,6 @@ class User {
   }
 
   Future<bool> unfriend(User other) async {
-    // TODO: using the id, unfriend
     // find the rqeuest
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) {

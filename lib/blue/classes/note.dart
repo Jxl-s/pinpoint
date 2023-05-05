@@ -25,7 +25,6 @@ class Note {
         id = id ?? '';
 
   static Future<List<Note>> getNotes(User user) async {
-    // TODO: using the user id, fetch their notes
     QuerySnapshot noteQuery = await DataService.collection('notes')
         .where('author_id', isEqualTo: user.id)
         .get();
@@ -78,10 +77,14 @@ class Note {
 
     List<Note> userNotes = [];
     List<Future<QuerySnapshot>> noteQueries = [];
+    List<int> skip = [];
 
     for (int i = 0; i < noteQuery.docs.length; i++) {
       var element = noteQuery.docs[i];
-      if (element.get('author_id') != user.id) continue;
+      if (element.get('author_id') != user.id) {
+        skip.add(i);
+        continue;
+      }
 
       // get the author with it
       noteQueries.add(DataService.collection("users")
@@ -91,6 +94,8 @@ class Note {
 
     var noteQueriesRun = await Future.wait(noteQueries);
     for (int i = 0; i < noteQuery.docs.length; i++) {
+      if (skip.contains(i)) continue;
+
       var element = noteQuery.docs[i];
       var authorUserQuery = noteQueriesRun[i];
 
@@ -119,8 +124,36 @@ class Note {
   }
 
   static Future<List<Note>> getFriendNotes(User user, Location location) async {
+    print('FETCHING NOTES!');
     // TODO: maybe a joined query for this one
-    return Note.example(5);
+    QuerySnapshot noteQuery = await DataService.collection('notes')
+        .where('location_id', isEqualTo: location.id)
+        .get();
+
+    print('NOTE LIST');
+    print(noteQuery);
+    List<Note> notes = [];
+    List<User> friends = await user.getFriends();
+
+    for (var note in noteQuery.docs) {
+      bool isFriendNote = false;
+      User? noteFriend;
+
+      for (var friend in friends) {
+        if (friend.id == note.get('author_id')) {
+          isFriendNote = true;
+          noteFriend = friend;
+          break;
+        }
+      }
+
+      if (isFriendNote) {
+        notes.add(Note(
+            author: noteFriend!, note: note.get('note'), location: location));
+      }
+    }
+
+    return notes;
   }
 
   Future<bool> create() async {

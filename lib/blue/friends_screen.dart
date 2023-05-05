@@ -402,7 +402,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
     User? loggedUser = await AuthService.getLoggedUser();
     if (loggedUser == null) return;
 
-    // TODO: will be implemented in the future
     var found = await User.searchUsers(user);
     setState(() {
       isSearching = false;

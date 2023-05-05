@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/blue/classes/location.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/classes/note.dart';
 import 'package:pinpoint/blue/map_screen.dart';
@@ -122,7 +123,9 @@ class _FriendsScreenNotesState extends State<FriendsScreenNotes> {
             Container(
               width: double.infinity,
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  // check if the user has pinned that location
+                  await Location.hasPinned(note.location);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

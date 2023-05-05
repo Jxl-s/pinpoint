@@ -98,6 +98,24 @@ class Location {
     return position;
   }
 
+  static Future<bool> hasPinned(Location location) async {
+    User? user = await AuthService.getLoggedUser();
+    if (user == null) {
+      return false;
+    }
+
+    // check if the logged user has pinned the location or not;
+    QuerySnapshot existingPin =
+    await pinsReference.where('author_id', isEqualTo: user.id).where('location_id', isEqualTo: location.id).get();
+
+    if (existingPin.docs.length > 0) {
+      location.isAdded = true;
+      return true;
+    } else {
+      location.isAdded = false;
+      return false;
+    }
+  }
   static Future<List<Location>> getNearby() async {
     User? user = await AuthService.getLoggedUser();
     if (user == null) {
@@ -204,7 +222,6 @@ class Location {
   }
 
   static Future<List<Location>> getPins(User user) async {
-    // TODO: using the user.id make it work for real
     QuerySnapshot locationsQuery =
         await pinsReference.where('author_id', isEqualTo: user.id).get();
 
@@ -248,7 +265,6 @@ class Location {
   }
 
   Future<bool> removePin(User user) async {
-    // TODO: create an entry, update the id too
     QuerySnapshot existQuery = await pinsReference
         .where('author_id', isEqualTo: user.id)
         .where('location_id', isEqualTo: id)

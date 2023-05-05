@@ -57,7 +57,6 @@ class _MyPinsNotesScreenState extends State<MyPinsNotesScreen>
         ),
       ),
       onPressed: () async {
-        // TODO: add real functionality here
         bool success = await note.delete();
         showNotification(
             context: context,
