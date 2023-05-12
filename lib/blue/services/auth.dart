@@ -5,6 +5,7 @@ import 'package:pinpoint/blue/services/data.dart';
 import 'package:pinpoint/blue/classes/user.dart' as UserClass;
 
 class AuthService {
+  static UserClass.User? testUser;
   static final GoogleSignIn googleSignIn = GoogleSignIn();
   static final CollectionReference usersCollection =
       DataService.collection('users');
@@ -18,6 +19,10 @@ class AuthService {
   }
 
   static Future<UserClass.User?> getLoggedUser() async {
+    if (testUser != null) {
+      return testUser!;
+    }
+
     if (loggedUser == null) {
       // try finding it
       final User? user = FirebaseAuth.instance.currentUser;
