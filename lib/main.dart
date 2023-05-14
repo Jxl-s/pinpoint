@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pinpoint/blue/classes/user.dart';
 import 'package:pinpoint/blue/landing_screen.dart';
 import 'package:pinpoint/blue/map_screen.dart';
-import 'package:pinpoint/blue/search_screen.dart';
 import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/settings_screen.dart';
 import 'package:pinpoint/blue/about_screen.dart';
