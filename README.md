@@ -37,7 +37,9 @@ Here is a list of user stories:
 18. As a user, I can delete all my notes
 19. As a user, I can change my username
 20. As a user, I can delete my account
-21. As a user, I can logout the application
+21. As a user, I can add notes to a location
+22. As a user, I can view my friend's notes in a specific location
+23. As a user, I can logout the application
 
 ## Tests
 The unit tests are implemented in the `tests` folder. To run the tests, run `flutter test`. We are only using unit tests, which only test the functions that make the app work, but not the interactions with the UI and the database.
