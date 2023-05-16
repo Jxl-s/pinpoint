@@ -87,13 +87,14 @@ class Message {
       UserClass.User? user = await AuthService.getLoggedUser();
       if (user == null) return false;
 
-      await DataService.collection('messages').add({
+      DocumentReference ref = await DataService.collection('messages').add({
         'author_id': author_id,
         'recipient_id': recipient_id,
         'date': DateTime.now(),
         'content': content,
       });
 
+      this.id = ref.id;
       // Get the recipient info
       if (isEncodedLocation(content)) {
         NotificationService.sendMessageNotif(user.name, "Shared a location", recipient_id);
