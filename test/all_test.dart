@@ -21,6 +21,10 @@ Future<void> main() async {
     expect(distanceCalc(1, 1, 200, 200) > 3000000, true);
   });
 
+  test('Can convert a distance to a string', () {
+    expect(Location(name: '', distance: 13333, type: 'Boba', address: '123 address', id: '1', isAdded: false).getDistanceString(), '13.3 km');
+  });
+
   test('Can encode a message', () {
     expect(Message.encodeLocation('12345'), '__PINPOINT_LOCATION:{12345}__');
   });
