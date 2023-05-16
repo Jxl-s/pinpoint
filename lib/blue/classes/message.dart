@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pinpoint/blue/classes/user.dart' as UserClass;
+import 'package:pinpoint/blue/services/auth.dart';
 import 'package:pinpoint/blue/services/data.dart';
+import 'package:pinpoint/blue/services/notification.dart';
 
 class Message {
   String id;
@@ -81,14 +84,23 @@ class Message {
 
   Future<bool> create() async {
     try {
-      DocumentReference ref = await DataService.collection('messages').add({
+      UserClass.User? user = await AuthService.getLoggedUser();
+      if (user == null) return false;
+
+      await DataService.collection('messages').add({
         'author_id': author_id,
         'recipient_id': recipient_id,
         'date': DateTime.now(),
         'content': content,
       });
 
-      this.id = ref.id;
+      // Get the recipient info
+      if (isEncodedLocation(content)) {
+        NotificationService.sendMessageNotif(user.name, "Shared a location", recipient_id);
+      } else {
+        NotificationService.sendMessageNotif(user.name, content, recipient_id);
+      }
+
       return true;
     } catch (e) {
       return false;
