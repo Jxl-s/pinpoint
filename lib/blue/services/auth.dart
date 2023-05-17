@@ -61,10 +61,10 @@ class AuthService {
     return loggedUser;
   }
 
-  static Future<UserClass.User> doGithubSignin() async {
+  static Future<UserClass.User> providerSignin(dynamic provider) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     UserCredential credential = await _auth.signInWithProvider(
-      GithubAuthProvider()
+        provider
     );
 
     User user = credential.user!;
@@ -96,6 +96,14 @@ class AuthService {
       email: q.docs[0].get('email'),
       avatar: q.docs[0].get('avatar'),
     );
+  }
+
+  static Future<UserClass.User> doTwitterSignin() async {
+    return providerSignin(TwitterAuthProvider());
+  }
+
+  static Future<UserClass.User> doGithubSignin() async {
+    return providerSignin(GithubAuthProvider());
   }
 
   static Future<UserClass.User> doGoogleSignin() async {

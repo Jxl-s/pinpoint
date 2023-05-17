@@ -68,6 +68,14 @@ class _LandingScreenState extends State<LandingScreen> {
                           widget.onSignin();
                         }
                       }),
+                  signinButton(
+                      provider: "Twitter",
+                      onPressed: () async {
+                        User user = await AuthService.doTwitterSignin();
+                        if (user != null) {
+                          widget.onSignin();
+                        }
+                      }),
                   // signinButton(provider: "Facebook", onPressed: () {}),
                   // signinButton(provider: "Discord", onPressed: () {}),
                 ],
