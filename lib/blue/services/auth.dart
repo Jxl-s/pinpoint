@@ -44,7 +44,7 @@ class AuthService {
         UserClass.User newUser = UserClass.User(
           id: q.docs[0].get("user_id"),
           name: q.docs[0].get('name'),
-          email: user.email!,
+          email: user.email ?? 'test@email.com',
           avatar: q.docs[0].get('avatar'),
         );
 
@@ -59,6 +59,43 @@ class AuthService {
     }
 
     return loggedUser;
+  }
+
+  static Future<UserClass.User> doGithubSignin() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    UserCredential credential = await _auth.signInWithProvider(
+      GithubAuthProvider()
+    );
+
+    User user = credential.user!;
+
+    // Find the user in the database now
+    final QuerySnapshot q = await usersCollection
+        .where('user_id', isEqualTo: user.uid)
+        .limit(1)
+        .get();
+
+    // if it does not exist, create it
+    print(user);
+    if (q.docs.length <= 0) {
+      UserClass.User newUser = UserClass.User(
+        id: user.uid,
+        name: user.displayName ?? 'Test User',
+        email: user.email ?? 'test@email.com',
+        avatar: user.photoURL ?? 'https://avatars.githubusercontent.com/u/89657774?v=4',
+      );
+
+      await newUser.create();
+      return newUser;
+    }
+
+    // Create the user
+    return UserClass.User(
+      id: q.docs[0].get('user_id'),
+      name: q.docs[0].get('name'),
+      email: q.docs[0].get('email'),
+      avatar: q.docs[0].get('avatar'),
+    );
   }
 
   static Future<UserClass.User> doGoogleSignin() async {

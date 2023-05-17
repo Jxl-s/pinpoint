@@ -60,6 +60,14 @@ class _LandingScreenState extends State<LandingScreen> {
                           widget.onSignin();
                         }
                       }),
+                  signinButton(
+                      provider: "GitHub",
+                      onPressed: () async {
+                        User user = await AuthService.doGithubSignin();
+                        if (user != null) {
+                          widget.onSignin();
+                        }
+                      }),
                   // signinButton(provider: "Facebook", onPressed: () {}),
                   // signinButton(provider: "Discord", onPressed: () {}),
                 ],
