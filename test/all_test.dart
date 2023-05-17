@@ -8,6 +8,9 @@ import 'package:pinpoint/blue/services/auth.dart';
 
 import 'package:pinpoint/main.dart';
 
+// Note: this only tests helper functions that are used by the application, rather than functions
+// that make the app work entirely, because these are unit tests and not acceptance tests
+// or end to end tests (also i could not get firebase to work here)
 Future<void> main() async {
   setUpAll(() async {
     AuthService.testUser = User(name: 'jia', email: 'jx@aa.aa', avatar: '', id: 'ij9wetojeruiegr0i9g');
