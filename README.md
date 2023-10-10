@@ -1,6 +1,6 @@
 ## 📍 PinPoint
 
-A mobile application that mainly focused on allowing users to save locations. Initially inspired by people easily forgetting places they went to.
+A mobile application that mainly focused on allowing users to save locations. Initially inspired by people easily forgetting places they went to. Made with Flutter and Firebase.
 
 Here are some features that this application provides:
 
