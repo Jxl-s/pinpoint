@@ -9,6 +9,7 @@ Here are some features that this application provides:
 -   Location sharing
 -   Location reviews, through providers
 
+---
 ## UI Snapshots
 
 Snapshots of some screens are included below. They are all fully responsive.
@@ -24,3 +25,10 @@ Snapshots of some screens are included below. They are all fully responsive.
 ### Messaging and Sharing
 
 <img src="./imgs/messaging.png" width="32%" />
+
+---
+## Notes
+
+I have deleted the firebase project, so the application will not run. However, you can still check out the code.
+
+Also, the Google Maps API key used in this project does not belong to me. It is a key I had found online.
